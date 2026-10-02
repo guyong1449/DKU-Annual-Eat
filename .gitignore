@@ -6,4 +6,7 @@ eat-data.json
 /.vscode
 **/.DS_Store
 
-*.json
+node_modules/
+private/
+dku-data-*.json
+dku-report-*.html
