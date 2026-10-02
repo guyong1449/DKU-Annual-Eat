@@ -1,0 +1,10 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const root=path.resolve(__dirname,'..');
+const read=file=>fs.readFileSync(path.join(root,'src',file),'utf8');
+const app=read('app.js');new vm.Script(app);
+const html=read('index.html').replace('/* STYLES */',()=>read('theme.css')).replace('/* APP */',()=>app.replace(/<\/script/gi,'<\\/script'));
+fs.mkdirSync(path.join(root,'dist'),{recursive:true});
+fs.writeFileSync(path.join(root,'dist/index.html'),html,'utf8');
+console.log('Built dist/index.html. Launch with 启动.cmd or npm start.');
