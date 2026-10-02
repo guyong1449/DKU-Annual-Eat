@@ -109,7 +109,7 @@ async function main(){
     if(previous.appId===appId && Number.isInteger(previous.port)&&previous.port>0&&previous.port<65536){
       preferredPort=previous.port;
       const response=await fetch(`http://127.0.0.1:${previous.port}/health`,{signal:AbortSignal.timeout(1000)});
-      if((await response.json()).appId===appId){openBrowser(`http://127.0.0.1:${previous.port}`);return;}
+      if((await response.json()).appId===appId){openBrowser(`http://127.0.0.1:${previous.port}`);process.send?.({type:'ready'});return;}
     }
   }catch{}
   require('./build.cjs');
@@ -163,9 +163,11 @@ async function main(){
   client.socket.addEventListener('close',()=>{log('browser closed');server.close();setTimeout(()=>process.exit(0),500);});
   setState('ready',library.items.length?'已恢复历史报告，可直接查看；需要更新流水时再采集新数据。':'选择某一年或全部年份。生成后可在报告中切换年份和月份。');
   console.log(origin);
+  process.send?.({type:'ready'});
 }
 main().catch(error=>{
   const message=error.code==='EADDRINUSE'?'工具的本机端口已被其他程序占用，启动失败。已有数据仍可通过「查看报告.html」离线查看。':error.message;
   log(message);console.error(message);setState('error',message);
+  process.send?.({type:'error',message});
   if(!server?.listening)process.exitCode=1;
 });

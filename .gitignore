@@ -8,5 +8,7 @@ eat-data.json
 
 node_modules/
 private/
+release/
+runtime/
 dku-data-*.json
 dku-report-*.html

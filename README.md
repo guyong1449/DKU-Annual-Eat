@@ -4,13 +4,15 @@
 
 ## 使用
 
+普通使用者下载 Windows 免安装压缩包后，**先完整解压，再双击 `启动.cmd`**。包内已包含 Node.js，无需另行安装运行环境；电脑需有 Chrome 或 Edge。
+
 1. 双击根目录的 `启动.cmd`。
 2. 工具会打开独立的 Chrome 窗口，并自动恢复已有报告。需要更新流水时，在统计范围中选择 2022 年起的某一年，或「全部年份（2022 年至今）」，点击「采集新数据」。
 3. 在自动打开的校园卡标签页完成学校登录及可能的 MFA。程序会自动等待，不需要复制密码、Cookie、授权链接或设置书签。
 4. 采集结束后自动在新标签页打开独立报告，默认显示最新年份。用顶部年份和月份选择器切换，所有汇总、图表、窗口标签及明细随之更新，无需再次采集。每次成功采集单独保存快照：JSON 位于 `private/`，新版 HTML 位于 `private/library/`。失败或取消不会清除原报告。
 5. 点击「退出工具」退出本工具的专用浏览器和本地服务。常用浏览器不受影响。保存的 HTML 可独立打开，交互图表无需网络。
 
-当前支持 Windows，要求 Node.js 22+ 和 Chrome（找不到时尝试 Edge）。本机已检测到 Node.js 24 和 Chrome，无需额外安装。没有 npm 依赖，无需 `npm install`。这是本地启动版，尚未打包成适用于其他电脑的独立 exe。
+当前支持 Windows。免安装包自带 Node.js；直接运行源代码时要求 Node.js 22+。Chrome 找不到时尝试 Edge。没有 npm 依赖，无需 `npm install`，也无需修改 PowerShell 执行策略。
 
 **日常查看与书签：** 双击根目录的 `查看报告.html`，打开后按 Ctrl+D 收藏报告库。这个入口是本地文件，退出工具、关闭专用浏览器或重启电脑后仍可查看历史报告。请保留项目目录及 `private/`，移动目录后需更新书签。报告库显示采集范围和保存时间，数据不会自动同步学校流水。
 
@@ -79,6 +81,18 @@ npm run build
 npm start
 ```
 
+在 Windows 构建免安装包：
+
+```powershell
+npm run package:win
+# 在 Windows 上打包 ARM64 版（需另外在 ARM64 机器验证）
+node scripts/package.cjs arm64
+```
+
+产物在 `release/DKU-Annual-Eat-1.0.0-win-x64.zip`，旁边提供 SHA-256 校验文件。构建从 Node.js 官方下载固定版本运行环境并校验官方 SHA-256；仅复制明确列出的代码、图片和许可，绝不打包 `private/`、流水、报告、浏览器会话或 Git 历史。运行环境许可保存在包内 `runtime/LICENSE`。打包缓存位于 `private/package-cache/`；`release/`、`runtime/` 均不纳入 Git。
+
+该压缩包适合电脑下载解压使用。二维码可指向正式发布后的下载页，但不能让手机运行 Windows 程序；手机扫码直接采集需要另一套学校授权或数据导入方案。目前构建不自动上传或发布 GitHub Release。
+
 修改 `src/index.html`、`src/app.js` 或 `src/theme.css` 后执行构建，刷新工具页。修改统计、报告或服务端脚本后，通过「退出工具」退出，再重新启动。每次新启动会自动构建采集界面并刷新报告库；重复双击会打开已运行实例，不额外启动一套服务。
 
 - `src/core.js`：交易解析、校验与整数金额统计。
@@ -87,7 +101,8 @@ npm start
 - `src/app.js`、`src/index.html`：本地工具界面。
 - `scripts/start.cjs`、`scripts/cdp.cjs`：本地服务与专用浏览器生命周期。
 - `scripts/library.cjs`：历史数据校验恢复、稳定链接、原子写入及离线报告库。
-- `scripts/launch.ps1`、`启动.cmd`：Windows 双击入口。
+- `scripts/launch.cjs`、`启动.cmd`：Windows 双击入口，优先使用包内运行环境，等待启动结果并记录失败日志；`scripts/launch.ps1` 保留为可选入口。
+- `scripts/package.cjs`：校验官方 Node.js 并生成不含个人数据的 Windows 免安装包。
 - `scripts/build.cjs`：无依赖构建。
 - `tests/`：金额、统计口径、异常数据、分页变化与取消测试；`parser.cases.js` 需要浏览器 DOMParser。
 
