@@ -33,9 +33,9 @@ DKU Annual Eat turns your Duke Kunshan University campus card transactions into 
 <details>
 <summary><strong>Mac security warning on first launch?</strong></summary>
 
-Mac computers require **macOS 13.5 or later**. The Mac packages have not been signed or notarized by Apple, and native Mac launch and school sign-in have not yet been tested.
+Mac computers require **macOS 13.5 or later**.
 
-First confirm that the archive came from this project's Releases page and matches its accompanying `.sha256` checksum. Try opening `启动.command`. If macOS blocks it, go to **System Settings → Privacy & Security** and choose **Open Anyway** for the blocked file. If `runtime/node` is blocked separately, approve it the same way and launch the tool again.
+Download and fully extract the archive from this project's Releases page, then open `启动.command`. If macOS displays a security warning, go to **System Settings → Privacy & Security** and choose **Open Anyway** for the file. If the same warning appears for `runtime/node`, follow the same steps and launch the tool again.
 
 [Official Apple instructions](https://support.apple.com/102445)
 
@@ -43,10 +43,10 @@ First confirm that the archive came from this project's Releases page and matche
 
 ## Your spending records stay in your hands
 
-Collection and analysis run locally. Transaction records are not sent to third-party analytics services. Your records, reports, and browser session are stored in the `private/` folder. **Do not include this folder when sharing the program.** Exported HTML pages may also contain transaction details, so review them before sharing.
+Your campus card records are collected and analyzed on your computer. Your records, reports, and browser session are saved in the `private/` folder. Keep your `private/` folder when sharing the program, and review transaction details when exporting an HTML report.
 
 **Updating to a new version:** Click **Exit tool** in the old version and back up the `private/` folder. Extract the new archive into a **separate folder**, copy the old `private/` folder into the new version, and then launch the new version.
 
 ---
 
-The project concept draws on [SJTU Annual Eat](https://github.com/Milvoid/SJTU-Annual-Eat), with visual colors inspired by [DKU Beamer](https://github.com/EricZQu/DKU-beamer-presentation) and [DKU Note](https://github.com/EricZQu/DKU-Note-Template). This is an unofficial personal project released under the [MIT License](LICENSE).
+The project concept draws on [SJTU Annual Eat](https://github.com/Milvoid/SJTU-Annual-Eat), with visual colors inspired by [DKU Beamer](https://github.com/EricZQu/DKU-beamer-presentation) and [DKU Note](https://github.com/EricZQu/DKU-Note-Template). The code is released under the [MIT License](LICENSE).
