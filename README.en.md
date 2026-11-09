@@ -43,7 +43,7 @@ Download and fully extract the archive from this project's Releases page, then o
 
 ## Your spending records stay in your hands
 
-Your campus card records are collected and analyzed on your computer. Your records, reports, and browser session are saved in the `private/` folder. Keep your `private/` folder when sharing the program, and review transaction details when exporting an HTML report.
+Your campus card records are collected and analyzed on your computer. Your records, reports, and browser session are saved in the `private/` folder. Share only the program files, and keep `private/` on your own computer. Exported HTML reports include transaction details, so choose what to share.
 
 **Updating to a new version:** Click **Exit tool** in the old version and back up the `private/` folder. Extract the new archive into a **separate folder**, copy the old `private/` folder into the new version, and then launch the new version.
 
