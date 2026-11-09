@@ -7,6 +7,7 @@ const {files:windowsFiles,nodeVersion}=require('./package.cjs');
 const root=path.resolve(__dirname,'..');
 const checksums={arm64:'a1a54f46a750d2523d628d924aab61758a51c9dad3e0238beb14141be9615dd3',x64:'f2879eb810e25993a0578e5d878930266fd2eafcffe9f2839b3d8db354d4879e'};
 const files=[...windowsFiles.filter(file=>file!=='启动.cmd'),'启动.command'];
+const securityGuide='安全性设置方法.png';
 const sha=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 function findPython(){
   for(const candidate of [process.env.DKU_PYTHON,'python3','python'].filter(Boolean)){
@@ -47,6 +48,7 @@ async function build(arch){
       if(file.endsWith('.command'))fs.writeFileSync(destination,fs.readFileSync(path.join(root,file),'utf8').replace(/\r\n/g,'\n'),'utf8');
       else fs.copyFileSync(path.join(root,file),destination);
     }
+    fs.copyFileSync(path.join(root,'docs','macos',securityGuide),path.join(product,securityGuide));
     archiveTool(python,['extract',runtimeArchive,nodeName,product,arch]);
     fs.writeFileSync(path.join(product,'使用说明.txt'),[
       `DKU Annual Eat · macOS ${arch==='arm64'?'Apple 芯片 / Apple silicon':'Intel'} · Portable`,'',
@@ -67,6 +69,8 @@ async function build(arch){
       '本包未完成 Apple Developer ID 签名、公证及 Mac 真机验收。',
       'This package is unsigned, unnotarized, and not yet verified on a physical Mac.','',
       '首次被系统拦截时 / If macOS blocks the first launch',
+      `图示见同目录「${securityGuide}」。`,
+      `For the illustrated steps, open ${securityGuide} in this folder.`,
       '确认下载来自本项目的 GitHub Releases，且 ZIP 校验值与附带的 .sha256 一致。',
       'Check that the ZIP came from this project’s GitHub Releases and matches its .sha256 file.',
       '1. 先双击一次「启动.command」，让系统显示拦截提示。',
@@ -89,7 +93,7 @@ async function build(arch){
     const version=require('../package.json').version;
     const manifest={version,platform:'darwin',arch,minimumOS:'13.5',nodeVersion,nodeSource:source,nodeArchiveSha256:checksums[arch],
       validation:'cross-built; native macOS launch and school login not verified',
-      files:[...files,'runtime/node','runtime/LICENSE','runtime/architecture','使用说明.txt'].map(file=>({file,sha256:sha(path.join(product,file))}))};
+      files:[...files,securityGuide,'runtime/node','runtime/LICENSE','runtime/architecture','使用说明.txt'].map(file=>({file,sha256:sha(path.join(product,file))}))};
     fs.writeFileSync(path.join(product,'release-manifest.json'),JSON.stringify(manifest,null,2),'utf8');
     const name=`DKU-Annual-Eat-${version}-mac-${arch}.zip`;
     const temp=path.join(staging,name);archiveTool(python,['pack',product,temp]);archiveTool(python,['verify',temp]);
