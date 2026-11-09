@@ -4,47 +4,49 @@
 
 **A whole year of meals, one story worth sharing.**
 
-Your campus card remembers your favorite dining counter, your usual meal times, and the purchases you almost forgot. DKU Annual Eat turns those swipes into a playful spending report—plus a few **Eat TI** dining characters that feel suspiciously familiar.
+Your campus card may know your dining habits better than you do. Which counter do you visit most? What was your biggest purchase? And what kind of diner have you become this year?
 
-[**Download the latest release →**](https://github.com/guyong1449/DKU-Annual-Eat/releases/latest)
+DKU Annual Eat turns your Duke Kunshan University campus card transactions into a playful spending report. **Eat TI** adds dining characters matched to your habits.
 
-## 🍜 What's inside?
+[**Download the latest version**](https://github.com/guyong1449/DKU-Annual-Eat/releases/latest)
 
-- **Your spending story:** Monthly trends, favorite counters, meal-time and spending breakdowns, and unexpected Fun Facts.
-- **Eat TI characters:** Discover up to six matches from 25 dining personalities, based on your actual campus card activity.
-- **Made to revisit and share:** Switch between years, months, or custom dates. Export a card, a long image, or a self-contained HTML report; you can also print to PDF. Saved reports work offline.
+## What's in the report?
 
-## 🚀 Get started in three steps
+- **Spending report:** Monthly trends, favorite dining counters, meal times, individual purchase amounts, and unexpected fun facts.
+- **Eat TI characters:** Discover up to six characters from a collection of 25, matched to your actual dining habits.
+- **Save and share:** View reports by year, month, or custom date range. Export cards, long images, or HTML web pages, and print reports as PDF files. Saved reports are available offline.
 
-**1. Download and fully extract** the ZIP for your computer from [Releases](https://github.com/guyong1449/DKU-Annual-Eat/releases/latest).
+## How to install and use it
 
-| Platform | ZIP filename ends with | Double-click |
+**Step 1: Download and extract.** Get the ZIP archive for your computer from the [Releases page](https://github.com/guyong1449/DKU-Annual-Eat/releases/latest), then extract the entire archive.
+
+| Computer | ZIP filename suffix | File to double-click |
 | --- | --- | --- |
-| Windows x64 | `win-x64.zip` | `启动.cmd` |
-| Mac · Apple silicon | `mac-arm64.zip` | `启动.command` |
-| Mac · Intel | `mac-x64.zip` | `启动.command` |
+| 64-bit Windows computer | `win-x64.zip` | `启动.cmd` |
+| Mac with Apple silicon | `mac-arm64.zip` | `启动.command` |
+| Mac with an Intel processor | `mac-x64.zip` | `启动.command` |
 
-**2. Launch the tool.** Node.js is bundled—**no separate Node.js setup or `npm install` needed**. You do need **Chrome or Edge** installed.
+**Step 2: Launch the tool.** The download already includes the Node.js runtime, so you do not need to install Node.js or run `npm install`. You must have **Google Chrome or Microsoft Edge** installed.
 
-**3. Collect your memories.** Pick a date range in the tool, select **Collect new data**, and complete your school **SSO / MFA** sign-in in the dedicated browser window. Open your report when collection finishes.
+**Step 3: Collect data and open your report.** Choose a date range in the tool, click **Collect new data**, and complete the school's single sign-on (SSO) and multi-factor authentication (MFA) in the dedicated browser window. Open your report after collection finishes.
 
 <details>
-<summary><strong>First launch blocked on Mac?</strong></summary>
+<summary><strong>Mac security warning on first launch?</strong></summary>
 
-Requires **macOS 13.5+**. The Mac packages are not Apple-signed or notarized, and native Mac launch and school sign-in have not yet been verified.
+Mac computers require **macOS 13.5 or later**. The Mac packages have not been signed or notarized by Apple, and native Mac launch and school sign-in have not yet been tested.
 
-After confirming the ZIP comes from this project's Releases and matches its `.sha256` checksum, try opening `启动.command`. Then go to **System Settings → Privacy & Security** and choose **Open Anyway** for the blocked file. If `runtime/node` is blocked separately, approve it the same way and relaunch.
+First confirm that the archive came from this project's Releases page and matches its accompanying `.sha256` checksum. Try opening `启动.command`. If macOS blocks it, go to **System Settings → Privacy & Security** and choose **Open Anyway** for the blocked file. If `runtime/node` is blocked separately, approve it the same way and launch the tool again.
 
-[Apple's official instructions](https://support.apple.com/102445)
+[Official Apple instructions](https://support.apple.com/102445)
 
 </details>
 
-## 🔒 Your data stays yours
+## Your spending records stay in your hands
 
-Collection and analysis run locally; your transactions aren't sent to third-party analytics services. The `private/` folder holds your records, reports, and browser session—**never include it when sharing the program**. Exported HTML can also contain transaction details, so check before sharing.
+Collection and analysis run locally. Transaction records are not sent to third-party analytics services. Your records, reports, and browser session are stored in the `private/` folder. **Do not include this folder when sharing the program.** Exported HTML pages may also contain transaction details, so review them before sharing.
 
-**Updating?** Click **Exit tool** in the old version and back up `private/`. Extract the new ZIP into a **new folder**, copy your old `private/` into it, then launch the new version.
+**Updating to a new version:** Click **Exit tool** in the old version and back up the `private/` folder. Extract the new archive into a **separate folder**, copy the old `private/` folder into the new version, and then launch the new version.
 
 ---
 
-Project concept based on [SJTU Annual Eat](https://github.com/Milvoid/SJTU-Annual-Eat), with colors inspired by [DKU Beamer](https://github.com/EricZQu/DKU-beamer-presentation) and [DKU Note](https://github.com/EricZQu/DKU-Note-Template). An unofficial personal project, released under the [MIT License](LICENSE).
+The project concept draws on [SJTU Annual Eat](https://github.com/Milvoid/SJTU-Annual-Eat), with visual colors inspired by [DKU Beamer](https://github.com/EricZQu/DKU-beamer-presentation) and [DKU Note](https://github.com/EricZQu/DKU-Note-Template). This is an unofficial personal project released under the [MIT License](LICENSE).
