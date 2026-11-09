@@ -126,3 +126,24 @@ test('collection defaults to 2026 and custom dates survive language changes and 
   await app.tick({phase:'collecting',message:'采集中',history:[snapshot]});
   assert.equal(app.get('collection-start').disabled,true);
 });
+
+test('Safari selection survives polling, explains permissions and is sent with the collection range',async()=>{
+  const app=harness('http:',async()=>{},{'dku-lang':'en'});
+  const state={phase:'ready',message:'就绪',history:[],browser:'chromium',browsers:[{id:'chromium',name:'Google Chrome'},{id:'safari',name:'Safari'}]};
+  await app.tick(state);
+  assert.equal(app.get('browser-settings').hidden,false);
+  assert.equal(app.get('safari-help').hidden,true);
+  app.get('browser').value='safari';app.get('browser').onchange();
+  await app.tick(state);
+  assert.equal(app.get('browser').value,'safari');assert.equal(app.get('safari-help').hidden,false);
+  await app.get('start').onclick();
+  assert.deepEqual(app.bodies.at(-1),{year:2026,browser:'safari'});
+  await app.tick({...state,phase:'login'});
+  assert.equal(app.get('browser').disabled,true);
+  await app.tick({...state,phase:'error',message:'请在 Safari 开发者设置中开启“允许来自 Apple Events 的 JavaScript”，然后重试'});
+  assert.match(app.get('status').textContent,/Enable Allow JavaScript from Apple Events/);
+  assert.equal(app.get('browser').disabled,false);
+  const safariOnly=harness();
+  await safariOnly.tick({...state,browser:'safari',browsers:[{id:'safari',name:'Safari'}]});
+  assert.equal(safariOnly.get('browser').value,'safari');assert.equal(safariOnly.get('safari-help').hidden,false);
+});

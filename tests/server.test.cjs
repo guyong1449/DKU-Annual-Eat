@@ -16,6 +16,9 @@ test('local API requires its per-run token and rejects other origins', {skip:!ba
   for(const [start,end] of [['2025-02-30','2025-03-01'],['2025-03-02','2025-03-01'],['2021-12-31','2022-01-01']])assert.equal((await fetch(base+'/api/start',{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({year:'custom',start,end})})).status,400);
   assert.equal((await fetch(base+'/report/not-a-valid-report')).status,403);
   const state=await (await fetch(base+'/api/status',{headers})).json();
+  assert.ok(Array.isArray(state.browsers));
+  assert.ok(state.browsers.some(browser=>browser.id===state.browser));
+  assert.equal((await fetch(base+'/api/start',{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:'{"year":"all","browser":"unknown"}'})).status,400);
   assert.ok(Array.isArray(state.history));
   for(const item of state.history.slice(0,1)){
     const report=await fetch(base+item.reportURL);

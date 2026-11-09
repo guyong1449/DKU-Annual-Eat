@@ -6,6 +6,7 @@ const campusOrigin = 'https://dkucard.dukekunshan.edu.cn';
 const navigationError = /Execution context was destroyed|Cannot find (?:default execution )?context|Inspected target navigated/i;
 
 async function collectInBrowser({client, targetId, sessionId, sources, start, end,
+  getTargetURL = async () => (await client.send('Target.getTargetInfo', {targetId})).targetInfo.url,
   cancelled = () => false, onState = () => {},
   pause = ms => new Promise(resolve => setTimeout(resolve, ms)), now = Date.now}) {
   const jobId = crypto.randomBytes(12).toString('hex');
@@ -29,8 +30,7 @@ async function collectInBrowser({client, targetId, sessionId, sources, start, en
   try {
     while (!collectionDeadline || now() < collectionDeadline) {
       if (cancelled()) throw new Error('已取消');
-      const {targetInfo} = await client.send('Target.getTargetInfo', {targetId});
-      const url = new URL(targetInfo.url);
+      const url = new URL(await getTargetURL());
       let page = {ready:false};
       if (url.origin === campusOrigin) {
         try {
@@ -49,7 +49,7 @@ async function collectInBrowser({client, targetId, sessionId, sources, start, en
       if (started && page.runId !== runId) restart();
       if (!started) {
         try {
-          await client.evaluate(`if(location.origin===${JSON.stringify(campusOrigin)}){\n${sources}\n}`, sessionId);
+          await client.evaluate(`(() => {if(location.origin===${JSON.stringify(campusOrigin)}){\n${sources}\n}})()`, sessionId);
           await client.evaluate(`(() => {
             if(location.origin!==${JSON.stringify(campusOrigin)})return;
             window.__dkuAppRun=${JSON.stringify(runId)};
@@ -65,7 +65,7 @@ async function collectInBrowser({client, targetId, sessionId, sources, start, en
               }).then(data=>{if(window.__dkuAppRun===${JSON.stringify(runId)}){window.__dkuAppData=data;update({phase:'complete'});}})
                 .catch(error=>update({phase:'error',message:error.message}));
             }catch(error){update({phase:'error',message:error.message});}
-          })();`, sessionId);
+          })()`, sessionId);
         } catch (error) {
           if (!navigationError.test(error.message)) throw error;
           restart();
@@ -100,9 +100,8 @@ async function collectInBrowser({client, targetId, sessionId, sources, start, en
     throw new Error('采集超过 30 分钟，请缩小范围后重试');
   } finally {
     try {
-      const {targetInfo} = await client.send('Target.getTargetInfo', {targetId});
-      if (new URL(targetInfo.url).origin === campusOrigin) {
-        await client.evaluate(`if(location.origin===${JSON.stringify(campusOrigin)} && window.__dkuAppRun?.startsWith(${JSON.stringify(jobId+'-')})){window.__dkuAppAbort?.abort();delete window.__dkuAppData;}`, sessionId);
+      if (new URL(await getTargetURL()).origin === campusOrigin) {
+        await client.evaluate(`(() => {if(location.origin===${JSON.stringify(campusOrigin)} && window.__dkuAppRun?.startsWith(${JSON.stringify(jobId+'-')})){window.__dkuAppAbort?.abort();delete window.__dkuAppData;}})()`, sessionId);
       }
     } catch {}
   }

@@ -26,7 +26,7 @@ DKU Annual Eat 把昆山杜克大学的校园卡消费记录整理成一份有�
 | 配备 Apple 芯片的 Mac | `mac-arm64.zip` | `启动.command` |
 | 配备 Intel 处理器的 Mac | `mac-x64.zip` | `启动.command` |
 
-**第二步：启动工具。** 发布包已自带 Node.js 运行环境，无需另行安装 Node.js 或执行 `npm install`。电脑需要已安装 **Google Chrome 或 Microsoft Edge** 浏览器。
+**第二步：启动工具。** 发布包已自带 Node.js 运行环境，无需另行安装 Node.js 或执行 `npm install`。Windows 使用 **Google Chrome 或 Microsoft Edge** 浏览器，Mac 的 `1.2.0-beta.1` 测试版也可选择 Safari。
 
 **第三步：采集数据并查看报告。** 在工具页面选择日期范围，点击「采集新数据」，然后在自动打开的专用浏览器中完成学校统一身份认证（SSO）和多因素身份验证（MFA）。采集完成后即可打开报告。
 
@@ -41,9 +41,22 @@ Mac 电脑需要运行 **macOS 13.5 或更新版本**。
 
 </details>
 
+<details>
+<summary><strong>使用 Safari 采集</strong></summary>
+
+Safari 采集从 [v1.2.0-beta.1 测试版](https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.2.0-beta.1) 开始提供。Mac 工具页可选择浏览器，只有 Safari 时会自动选中它。
+
+1. 在 Safari 设置 → 高级中显示开发者功能，再到开发者设置开启“允许来自 Apple Events 的 JavaScript”。
+2. 点击采集后，允许系统弹窗中的启动程序控制 Safari，通常显示为“终端”。授权可在系统设置 → 隐私与安全性 → 自动化中管理。
+3. 在新开的 Safari 窗口完成学校 SSO 和 MFA，采集期间保留原来的单个标签页。
+
+工具通过 macOS 自带的 AppleScript/JXA 执行页面脚本，核对工具创建的窗口和校园卡域名后采集。包内附有中英使用说明和 `安全性设置方法.png`。Safari 真机上的权限弹窗、学校登录和图片导出尚待验收。
+
+</details>
+
 ## 数据与更新
 
-校园卡消费记录在本机采集和统计，个人数据、报告和浏览器登录会话都保存在 `private/` 文件夹中。分享程序时只复制程序文件，将 `private/` 文件夹留在自己的电脑上。导出的 HTML 网页包含消费明细，可按需选择分享内容。
+校园卡消费记录在本机采集和统计，个人数据、报告和 Chrome / Edge 专用浏览器登录会话保存在 `private/` 文件夹中，Safari 的登录状态由 Safari 自身管理。分享程序时只复制程序文件，将 `private/` 文件夹留在自己的电脑上。导出的 HTML 网页包含消费明细，可按需选择分享内容。
 
 **更新到新版本：** 在旧版本中点击「退出工具」，备份 `private/` 文件夹。将新版本的压缩包完整解压到**新的文件夹**，再把旧版的 `private/` 复制到新版本目录中，最后启动新版本。
 

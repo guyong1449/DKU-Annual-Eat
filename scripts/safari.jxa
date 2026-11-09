@@ -1,0 +1,46 @@
+/* Run by macOS osascript. Only window IDs created by the caller are addressed. */
+function run(argv) {
+  var command = JSON.parse(argv[0]);
+  var safari = Application('com.apple.Safari');
+  function result(value) { return JSON.stringify({ok:true, value:value}); }
+  function failure(code) { return JSON.stringify({ok:false, code:code}); }
+  if (command.operation === 'open') {
+    if (!safari.running()) safari.launch();
+    var previous = safari.windows().map(function(window) { return window.id(); });
+    var document = safari.Document({url:'about:blank'}).make();
+    var created = safari.windows().filter(function(window) { return previous.indexOf(window.id()) === -1; });
+    if (created.length !== 1) {
+      document.close();
+      return failure('window-creation');
+    }
+    return result(created[0].id());
+  }
+  if (!safari.running()) return failure('window-closed');
+  var windows = safari.windows().filter(function(window) { return window.id() === command.windowId; });
+  if (windows.length !== 1) return failure('window-closed');
+  var window = windows[0];
+  if (command.operation === 'close') {
+    window.close();
+    return result(null);
+  }
+  var tabs = window.tabs();
+  if (tabs.length !== 1) return failure('tab-changed');
+  var tab = tabs[0];
+  if (command.operation === 'url') return result(tab.url());
+  if (command.operation === 'navigate') {
+    tab.url = command.url;
+    window.index = 1;
+    safari.activate();
+    return result(null);
+  }
+  if (command.operation !== 'evaluate') return failure('unknown-operation');
+  // Check inside the browser too, covering navigation between a URL read and execution.
+  var url = tab.url();
+  var allowed = command.origins.some(function(origin) { return url === origin || url.indexOf(origin + '/') === 0; });
+  if (!(command.allowBlank && url === 'about:blank') && !allowed) return failure('page-reloading');
+  var script = 'JSON.stringify((function(){try{return {ok:true,value:(' + command.expression +
+    ')};}catch(error){return {ok:false,message:String(error.message || error)};}})())';
+  var response = safari.doJavaScript(script, {in:tab});
+  if (typeof response !== 'string' || !response) return failure('page-reloading');
+  return response;
+}

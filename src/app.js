@@ -24,6 +24,21 @@ $('year').onchange=()=>{
 };
 for(const id of ['collection-start','collection-end'])$(id).onchange=()=>{$('year').value='custom';};
 let history=[],rendered='',stopped=false,failures=0,lastState;
+let browserChoices='';
+function showBrowsers(state){
+  if(!state.browsers)return;
+  const signature=JSON.stringify(state.browsers);
+  if(signature!==browserChoices){
+    const selection=$('browser').value||state.browser;
+    $('browser').replaceChildren();
+    for(const browser of state.browsers){const option=document.createElement('option');option.value=browser.id;option.textContent=browser.name;$('browser').append(option);}
+    if(state.browsers.some(browser=>browser.id===selection))$('browser').value=selection;
+    browserChoices=signature;
+  }
+  $('browser-settings').hidden=!state.browsers.some(browser=>browser.id==='safari');
+  $('safari-help').hidden=$('browser').value!=='safari';
+}
+$('browser').onchange=()=>{$('safari-help').hidden=$('browser').value!=='safari';};
 async function api(path,body){
   const response=await fetch(path,{method:body?'POST':'GET',signal:AbortSignal.timeout(10000),headers:{'X-DKU-App':token,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
   if(!response.ok){const body=await response.json();const error=new Error(body.error||'本机服务未就绪');error.status=response.status;throw error;}
@@ -92,7 +107,9 @@ $('start').onclick=async()=>{
   try{
     const custom=['custom','month','30'].includes($('year').value),start=$('collection-start').value,end=$('collection-end').value;
     if(custom&&(!start||!end||start>end||start<'2022-01-01'||end>today))throw new Error(t('请填写有效的起止日期，范围为 2022-01-01 至今天','Enter valid dates between 2022-01-01 and today'));
-    await api('/api/start',custom?{year:'custom',start,end}:{year:$('year').value==='all'?'all':Number($('year').value)});$('status').textContent=t('正在打开学校登录页面…','Opening the campus sign-in page…');
+    const range=custom?{year:'custom',start,end}:{year:$('year').value==='all'?'all':Number($('year').value)};
+    if($('browser').value)range.browser=$('browser').value;
+    await api('/api/start',range);$('status').textContent=t('正在打开学校登录页面…','Opening the campus sign-in page…');
   }catch(error){$('status').textContent=collectionError(error.message);$('start').disabled=false;}
 };
 $('cancel').onclick=async()=>{try{await api('/api/cancel',{});$('status').textContent=t('正在取消…','Cancelling…');}catch(error){$('status').textContent=t(error.message,'Unable to cancel. Please try again.');}};
@@ -100,7 +117,7 @@ $('quit').onclick=async()=>{
   try{await api('/api/quit',{});stopped=true;disconnect(t('工具已退出。下次启动后可继续查看已保存的报告。','Tool closed. Your saved reports will be available next time.'));}
   catch(error){$('status').hidden=false;$('status').textContent=t(error.message,'Unable to close the tool. Please try again.');}
 };
-function disconnect(message){$('status').hidden=false;$('status').textContent=message;$('progress').hidden=true;for(const id of ['start','year','collection-start','collection-end','cancel','quit'])$(id).disabled=true;}
+function disconnect(message){$('status').hidden=false;$('status').textContent=message;$('progress').hidden=true;for(const id of ['start','year','browser','collection-start','collection-end','cancel','quit'])$(id).disabled=true;}
 async function poll(){
   if(location.protocol==='file:'){
     disconnect(t('请使用桌面启动器打开工具。','Use the desktop launcher to open the tool.'));
@@ -110,6 +127,7 @@ async function poll(){
   try{
     const state=await (await api('/api/status')).json();lastState=state;failures=0;
     const busy=['preparing','login','collecting'].includes(state.phase);
+    showBrowsers(state);$('browser').disabled=busy;
     $('start').disabled=busy;$('year').disabled=busy;$('quit').disabled=false;$('cancel').disabled=!['login','collecting'].includes(state.phase);
     $('collection-start').disabled=busy;$('collection-end').disabled=busy;
     showStatus(state);
@@ -130,6 +148,15 @@ function showStatus(state){
 }
 function collectionError(message){
   const messages={
+    '请在“系统设置 → 隐私与安全性 → 自动化”中允许启动程序控制 Safari，然后重试':'Allow the launching app to control Safari in System Settings → Privacy & Security → Automation, then try again.',
+    '请在 Safari 开发者设置中开启“允许来自 Apple Events 的 JavaScript”，然后重试':'Enable Allow JavaScript from Apple Events in Safari Developer settings, then try again.',
+    'Safari 采集窗口已关闭，请重新开始采集':'The Safari collection window was closed. Start collection again.',
+    '请在 Safari 采集窗口中仅保留原来的一个标签页，然后重试':'Keep only the original tab in the Safari collection window, then try again.',
+    '未能创建独立 Safari 窗口，请重试':'A dedicated Safari window could not be created. Try again.',
+    'Safari 操作超时，请检查权限提示后重试':'Safari timed out. Check any permission prompts and try again.',
+    'Safari 操作失败，请检查浏览器和自动化权限后重试':'Safari could not be controlled. Check the browser and its automation permissions, then try again.',
+    'Safari 返回了无效结果，请重试':'Safari returned an invalid result. Try again.',
+    '未找到所选浏览器，请安装后重新启动工具':'The selected browser is unavailable. Install it and reopen the tool.',
     '已取消':'Collection cancelled.',
     '已取消，未生成部分报告。':'Collection cancelled. No partial report was saved.',
     '等待登录超过 10 分钟，请点击开始重试':'Sign-in timed out after 10 minutes. Start collection again.',
