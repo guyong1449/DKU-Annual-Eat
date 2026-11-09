@@ -10,13 +10,13 @@ DKU Annual Eat turns your Duke Kunshan University campus card transactions into 
 
 [**Download the latest version**](https://github.com/guyong1449/DKU-Annual-Eat/releases/latest)
 
-## What's in the report?
+## Report contents
 
 - **Spending report:** Monthly trends, favorite dining counters, meal times, individual purchase amounts, and unexpected fun facts.
 - **Eat TI characters:** Discover up to six characters from a collection of 25, matched to your actual dining habits.
 - **Save and share:** View reports by year, month, or custom date range. Export cards, long images, or HTML web pages, and print reports as PDF files. Saved reports are available offline.
 
-## How to install and use it
+## Installation and usage
 
 **Step 1: Download and extract.** Get the ZIP archive for your computer from the [Releases page](https://github.com/guyong1449/DKU-Annual-Eat/releases/latest), then extract the entire archive.
 
@@ -41,7 +41,7 @@ Download and fully extract the archive from this project's Releases page, then o
 
 </details>
 
-## Your spending records stay in your hands
+## Data and updates
 
 Your campus card records are collected and analyzed on your computer. Your records, reports, and browser session are saved in the `private/` folder. Share only the program files, and keep `private/` on your own computer. Exported HTML reports include transaction details, so choose what to share.
 
