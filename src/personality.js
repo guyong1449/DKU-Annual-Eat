@@ -347,8 +347,8 @@ function createEatTI() {
     const T=i18n[lang],en=lang==='en',card=kind==='card';
     const NAVY='#044384',GREEN='#047444',INK='#172641',MUTED='#526176',PAPER='#f3f6fa',LINE='#dce3ec';
     const parts=[],push=s=>parts.push(s);
-    const chart=distributionShareSVG(result,lang,378);
-    const roleY=378+chart.height+20,columns=card?2:1,gap=24,width=card?480:984,inset=card?24:32;
+    const chart=card?null:distributionShareSVG(result,lang,378);
+    const roleY=card?190:378+chart.height+20,columns=card?2:1,gap=24,width=card?480:984,inset=card?24:32;
     const textInset=card?inset:240,contentWidth=width-textInset-inset;
     const layouts=result.roles.map(type=>{
       const title=shareWrap(en?type.en:type.name,card?28:32,600,contentWidth,3);
@@ -376,21 +376,23 @@ function createEatTI() {
     push(shareText(1008,88,26,400,INK,yearLabel+(en?'':' 年'),{anchor:'end'}));
     push(shareText(1008,124,16,600,MUTED,'THE FLAVOUR FILES',{anchor:'end',spacing:2}));
     push(`<line x1="72" y1="174" x2="1008" y2="174" stroke="${LINE}"/>`);
-    push(`<rect x="48" y="190" width="984" height="168" rx="20" fill="white"/>`);
-    push(shareText(72,222,18,500,MUTED,'FUN FACTS',{spacing:2}));
-    const facts=result.facts;
-    const highlights=[
-      [en?'Largest charge':'单笔最高',`¥ ${money(-facts.largest.cents)}`,facts.largest.time.slice(0,10)],
-      [en?'Longest daily streak':'最长连续消费',`${facts.streak} ${en?'days':'天'}`,`${result.days} ${en?'active days':'个消费日'}`],
-      [en?'Weekend share':'周末消费占比',`${pct(facts.weekends,result.count)}%`,`${facts.weekends} ${en?'swipes':'次'}`]
-    ];
-    highlights.forEach(([label,value,sub],i)=>{
-      const x=72+i*320;
-      push(shareText(x,256,18,400,MUTED,label));
-      push(shareText(x,298,28,500,i===1?GREEN:NAVY,value));
-      push(shareText(x,330,16,400,MUTED,sub));
-    });
-    push(chart.svg);
+    if(!card){
+      push(`<rect x="48" y="190" width="984" height="168" rx="20" fill="white"/>`);
+      push(shareText(72,222,18,500,MUTED,'FUN FACTS',{spacing:2}));
+      const facts=result.facts;
+      const highlights=[
+        [en?'Largest charge':'单笔最高',`¥ ${money(-facts.largest.cents)}`,facts.largest.time.slice(0,10)],
+        [en?'Longest daily streak':'最长连续消费',`${facts.streak} ${en?'days':'天'}`,`${result.days} ${en?'active days':'个消费日'}`],
+        [en?'Weekend share':'周末消费占比',`${pct(facts.weekends,result.count)}%`,`${facts.weekends} ${en?'swipes':'次'}`]
+      ];
+      highlights.forEach(([label,value,sub],i)=>{
+        const x=72+i*320;
+        push(shareText(x,256,18,400,MUTED,label));
+        push(shareText(x,298,28,500,i===1?GREEN:NAVY,value));
+        push(shareText(x,330,16,400,MUTED,sub));
+      });
+      push(chart.svg);
+    }
     layouts.forEach((layout,index)=>{
       const {type:t,x,y}=layout,tx=x+textInset;
       const tint=t.color===GREEN?'rgba(4,116,68,.07)':t.tint;

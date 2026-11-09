@@ -227,7 +227,7 @@ test('catalog speaks full chinese or full english per mode, with english accents
   assert.ok(share.svg.startsWith('<svg xmlns="http:'));
   assert.ok(share.svg.includes('/2000/svg" width="1080"'));
   assert.match(share.svg,/data:image\/png;base64,DUSK/);
-  assert.equal(share.width,1080);assert.ok(share.height>1920);
+  assert.equal(share.width,1080);assert.ok(share.height>1200);
   result.roles.forEach(t=>assert.ok(share.svg.includes(t.name)));
   const long=eat.shareSVG(result,'en','All years','long',illustrations);
   assert.ok(long.height>share.height);assert.ok(!long.svg.includes('YOUR DINING FLAVOUR CODE'));
@@ -328,19 +328,27 @@ test('weekend matching includes exactly 20% and still requires six swipes',()=>{
   assert.match(eat.types.find(t=>t.id==='WEEK').rule,/20%/);
 });
 
-test('EatTI exports replace the three scales with dining facts and distributions before the characters',()=>{
+test('EatTI long images retain facts and distributions while cards contain only the character profiles',()=>{
   const rows=['2025-01-01','2025-01-02','2025-01-03','2025-01-04','2025-01-04','2025-01-06'].map((date,i)=>row(i,{time:date+' 17:30',cents:i===4?-3600:-1200}));
   const result=eat.analyze([...rows,row(7,{merchant:'校园打印',cents:-99999}),row(8,{cents:99999})]);
   assert.equal(result.facts.largest.cents,-3600);
   assert.equal(result.facts.streak,4);
   assert.equal(result.facts.weekends,2);
-  for(const kind of ['card','long'])for(const lang of ['zh','en']){
-    const {svg}=eat.shareSVG(result,lang,'2025',kind,illustrations);
+  for(const lang of ['zh','en']){
+    const {svg}=eat.shareSVG(result,lang,'2025','long',illustrations);
     for(const label of ['FUN FACTS',...eat.i18n[lang].distLabels])assert.ok(svg.indexOf(label)<svg.indexOf('href="data:image/png;base64,'+result.roles[0].id+'"'),label);
     assert.match(svg,/¥ 36.00/);assert.match(svg,/33.3%/);
     assert.ok(!svg.includes('<circle')&&!/<rect[^>]*fill="#1f5b46"/.test(svg));
     assert.ok(!/本命专一|四处打卡|犒劳大餐|After dark/.test(svg));
     assert.equal((svg.match(/FUN FACTS/g)||[]).length,1);
+    const card=eat.shareSVG(result,lang,'2025','card',illustrations);
+    for(const label of ['FUN FACTS',...eat.i18n[lang].distLabels])assert.ok(!card.svg.includes(label),label);
+    for(const role of result.roles){
+      assert.ok(card.svg.includes(lang==='zh'?role.name:role.en));
+      assert.ok(card.svg.includes(core.escapeHTML((lang==='zh'?role.story:role.storyEn).slice(0,12))));
+      assert.ok(card.svg.includes(`href="${illustrations[role.id]}"`));
+    }
+    assert.ok(card.height<eat.shareSVG(result,lang,'2025','long',illustrations).height);
   }
 });
 
@@ -352,10 +360,10 @@ test('EatTI exports share the report distribution layout and keep bilingual char
   assert.match(chart.svg,/rx="6"/);
   for(const kind of ['card','long']){
     const share=eat.shareSVG(result,'zh','2025-01-01 — 2025-01-12',kind,illustrations);
-    const header=share.svg.slice(0,share.svg.indexOf('FUN FACTS'));
+    const header=share.svg.slice(0,share.svg.indexOf(kind==='card'?'<svg x="':'FUN FACTS'));
     assert.match(header,/>2025 年<\/text>/);
     assert.ok(!/\d{4}-\d{2}-\d{2}|饭格代码|FLAVOUR CODE|干饭档案|年度番外|Your dining dossier|<tspan/.test(header));
-    assert.ok(share.svg.includes(chart.svg));
+    assert.equal(share.svg.includes(chart.svg),kind==='long');
     result.roles.forEach(role=>{
       assert.ok(share.svg.includes(role.name));assert.ok(share.svg.includes(role.en));assert.ok(share.svg.includes(role.id));
     });
