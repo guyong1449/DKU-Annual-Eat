@@ -1,13 +1,14 @@
 {
   "name": "dku-annual-eat",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "DKU campus card local browser collector and offline spending report",
   "scripts": {
     "build": "node scripts/build.cjs",
     "test": "node --test tests/*.test.cjs",
     "start": "node scripts/start.cjs",
-    "package:win": "node scripts/package.cjs"
+    "package:win": "node scripts/package.cjs",
+    "package:mac": "node scripts/package-mac.cjs"
   },
   "engines": { "node": ">=22" },
   "license": "MIT"

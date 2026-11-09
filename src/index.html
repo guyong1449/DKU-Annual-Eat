@@ -1,18 +1,19 @@
 <!doctype html>
 <html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer">
-<title>DKU Annual Eat · 校园消费报告</title><style>/* STYLES */</style>
+<title data-en="DKU Annual Eat · Campus spending report">DKU Annual Eat · 校园消费报告</title><style>/* STYLES */</style>
 </head><body>
-<header class="topbar"><div class="brand"><span class="brand-mark">D.</span><div>DKU ANNUAL EAT</div></div></header>
+<header class="topbar"><div class="brand"><span class="brand-mark">D.</span><div>DKU ANNUAL EAT</div></div><button id="language-toggle" class="secondary" type="button">English</button></header>
 <main class="page launch-page">
 <div class="launch-layout">
-<div class="launch-intro"><h1>这一年的日常，<br>让<em>数字</em>讲给你听。</h1><div class="launch-art" aria-hidden="true"><span style="height:36%"></span><span style="height:61%"></span><span style="height:48%"></span><span style="height:87%"></span><span style="height:68%"></span><span style="height:100%"></span><span style="height:79%"></span></div></div>
-<section class="card setup"><h2>更新你的消费记录</h2>
-<label for="year">统计范围</label><select id="year"></select>
-<button id="start" disabled><span>采集新数据</span><span aria-hidden="true">↗</span></button>
-<p id="status" class="status" role="status" aria-live="polite">正在连接…</p><progress id="progress" class="progress" value="0" max="1" aria-label="采集进度"></progress>
-<div class="setup-bottom"><button id="cancel" class="ghost" disabled>取消采集</button><button id="quit" class="ghost">退出工具</button></div>
+<div class="launch-intro"><h1><span data-en="A year of everyday life.">这一年的日常，</span><br><span data-en="Let the numbers tell it.">让数字讲给你听。</span></h1><div class="launch-art" aria-hidden="true"><span style="height:36%"></span><span style="height:61%"></span><span style="height:48%"></span><span style="height:87%"></span><span style="height:68%"></span><span style="height:100%"></span><span style="height:79%"></span></div></div>
+<section class="card setup"><h2 data-en="Update your spending records">更新你的消费记录</h2>
+<label for="year" data-en="Date range">统计范围</label><select id="year"></select>
+<div id="collection-dates" class="date-fields" hidden><div><label for="collection-start" data-en="Start date">开始日期</label><input id="collection-start" type="date" required></div><span aria-hidden="true">—</span><div><label for="collection-end" data-en="End date">结束日期</label><input id="collection-end" type="date" required></div></div>
+<button id="start" disabled><span data-en="Collect new records">采集新数据</span><span aria-hidden="true">↗</span></button>
+<p id="status" class="status" role="status" aria-live="polite" data-en="Connecting…">正在连接…</p><progress id="progress" class="progress" value="0" max="1" aria-label="采集进度" data-en-aria="Collection progress"></progress>
+<div class="setup-bottom"><button id="cancel" class="ghost" disabled data-en="Cancel collection">取消采集</button><button id="quit" class="ghost" data-en="Quit tool">退出工具</button></div>
 </section></div>
-<section id="result" class="card result" hidden><h2>已保存的报告</h2><label for="history" class="sr-only">选择报告</label><select id="history"></select><div id="downloads" class="actions"></div></section>
-<section class="card archive-help"><h2>离线查看</h2><p>打开「查看报告.html」，可离线阅读和收藏。</p><a id="offline-link" class="button" href="../private/home.html" hidden>打开报告库</a><p id="history-warning" role="status" hidden></p><p id="empty-history">正在查找报告…</p></section>
+<section id="result" class="card result" hidden><h2 data-en="Saved reports">已保存的报告</h2><label for="history" class="sr-only" data-en="Choose a report">选择报告</label><select id="history"></select><div id="downloads" class="actions"></div><p id="export-status" class="muted" role="status" hidden></p></section>
+<p id="history-warning" class="notice" role="status" hidden></p><p id="empty-history" class="muted" data-en="Looking for saved reports…">正在查找报告…</p>
 </main><script>/* APP */</script></body></html>

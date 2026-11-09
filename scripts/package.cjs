@@ -7,10 +7,10 @@ const root=path.resolve(__dirname,'..');
 const nodeVersion='24.14.0';
 // Official https://nodejs.org/dist/v24.14.0/SHASUMS256.txt checksums.
 const checksums={x64:'313fa40c0d7b18575821de8cb17483031fe07d95de5994f6f435f3b345f85c66',arm64:'88d36e8109736a2fa9bdc596f2cf507a3c52c69cdf96e54f8acd473ec14be853'};
-const files=['启动.cmd','查看报告.html','LICENSE','package.json','dist/index.html',
-  'scripts/start.cjs','scripts/launch.cjs','scripts/cdp.cjs','scripts/library.cjs','scripts/build.cjs',
-  'src/app.js','src/index.html','src/core.js','src/collector.js','src/report.js','src/theme.css',
-  'src/personality.js','src/personality.css','src/assets/eatti-characters-cartoon.png','src/assets/eatti-western-steak.png'];
+const files=['启动.cmd','查看报告.html','LICENSE','README.md','package.json','dist/index.html',
+  'scripts/start.cjs','scripts/launch.cjs','scripts/cdp.cjs','scripts/library.cjs','scripts/build.cjs','scripts/platform.cjs',
+  'src/app.js','src/index.html','src/core.js','src/collector.js','src/report.js','src/language.js','src/share.js','src/theme.css',
+  'src/personality.js','src/personality.css',...require('../src/personality.js').createEatTI().types.map(({id})=>`src/assets/characters/${id}.png`)];
 const sha=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 function powershell(command,env){
   const result=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-Command',command],{

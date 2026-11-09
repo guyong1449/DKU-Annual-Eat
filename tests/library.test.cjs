@@ -53,3 +53,12 @@ test('a damaged index is rebuilt from source files without deleting sources',t=>
   assert.match(restored.warnings[0],/索引损坏/);
   assert.deepEqual(restored.data(restored.items[0].id),data);
 });
+
+test('custom range snapshots keep their exact dates after restart',t=>{
+  const dir=directory(t),library=new ReportLibrary(dir);
+  const custom={...data,start:'2024-12-31',end:'2025-01-02'};
+  const item=library.save(custom,'custom');
+  assert.match(item.file,/^dku-custom-/);
+  const restored=new ReportLibrary(dir);
+  assert.deepEqual(restored.data(item.id),custom);
+});

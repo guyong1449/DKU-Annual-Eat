@@ -5,6 +5,7 @@ const crypto=require('node:crypto');
 const {spawn}=require('node:child_process');
 const {CDP}=require('./cdp.cjs');
 const {ReportLibrary}=require('./library.cjs');
+const {browserCandidates}=require('./platform.cjs');
 const core=require('../src/core.js');
 const root=path.resolve(__dirname,'..');
 const privateDir=path.join(root,'private');
@@ -18,12 +19,15 @@ fs.mkdirSync(privateDir,{recursive:true});
 const log=message=>fs.appendFileSync(path.join(privateDir,'app.log'),`${new Date().toISOString()} ${message}\n`);
 let state={phase:'ready',message:'选择年份，点击开始。学校登录将在专用窗口中完成。'};
 let client,server,origin,activeTarget,activeSession,cancelled=false,result,activeJob=false,library;
-const chromeCandidates=[process.env.PROGRAMFILES&&path.join(process.env.PROGRAMFILES,'Google/Chrome/Application/chrome.exe'),process.env.LOCALAPPDATA&&path.join(process.env.LOCALAPPDATA,'Google/Chrome/Application/chrome.exe'),process.env['PROGRAMFILES(X86)']&&path.join(process.env['PROGRAMFILES(X86)'],'Microsoft/Edge/Application/msedge.exe')].filter(Boolean);
-const browserPath=chromeCandidates.find(file=>fs.existsSync(file));
+const browserPath=browserCandidates().find(file=>fs.existsSync(file));
 function openBrowser(url,debug=false){
   if(!browserPath)throw new Error('未找到 Chrome 或 Edge，请先安装其中一个浏览器');
   const args=[`--user-data-dir=${profile}`,'--no-first-run','--no-default-browser-check'];
-  if(debug)args.push('--remote-debugging-address=127.0.0.1','--remote-debugging-port=0');
+  if(debug){
+    // A stale file can point at the previous browser's closed debugging port.
+    fs.rmSync(path.join(profile,'DevToolsActivePort'),{force:true});
+    args.push('--remote-debugging-address=127.0.0.1','--remote-debugging-port=0');
+  }
   args.push(url);
   const child=spawn(browserPath,args,{stdio:'ignore',detached:true,windowsHide:false});
   child.on('error',()=>{state={phase:'error',message:'无法启动浏览器，请检查 Chrome 或 Edge 安装。'};});child.unref();
@@ -139,7 +143,7 @@ async function main(){
       if(req.method==='POST'&&url.pathname==='/api/start'){
         const body=await requestBody(req);
         let range;
-        try{range=core.queryRange(body.year,new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Shanghai'}));}catch(error){json(res,400,{error:error.message});return;}
+        try{range=core.queryRange(body.year==='custom'?{start:body.start,end:body.end}:body.year,new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Shanghai'}));}catch(error){json(res,400,{error:error.message});return;}
         if(!client||client.socket.readyState!==WebSocket.OPEN||activeJob){json(res,409,{error:'浏览器正在准备、已关闭或已有采集任务。请重新启动工具后重试。'});return;}
         void startJob(range);json(res,202,{ok:true});return;
       }

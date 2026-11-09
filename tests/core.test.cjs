@@ -129,3 +129,10 @@ test('refunds must follow expenses within five minutes on the same date',()=>{
 test('same-minute positive expense reversals match regardless of ID or input order',()=>{
   const s=core.summarize(data([row('a',1000),row('z',-1000)]));assert.equal(s.total,0);assert.equal(s.expenses.length,0);assert.equal(s.excluded.length,2);
 });
+
+
+test('custom query ranges include both boundary dates and reject impossible or unavailable dates',()=>{
+  assert.deepEqual(core.queryRange({start:'2024-02-29',end:'2026-01-01'},'2026-11-09'),{start:'2024-02-29',end:'2026-01-01',label:'custom'});
+  assert.deepEqual(core.queryRange({start:'2026-11-09',end:'2026-11-09'},'2026-11-09'),{start:'2026-11-09',end:'2026-11-09',label:'custom'});
+  for(const [start,end] of [['2025-02-29','2025-03-01'],['2026-05-02','2026-05-01'],['2021-12-31','2022-01-01'],['2026-11-09','2026-11-10'],['','2026-11-09']])assert.throws(()=>core.queryRange({start,end},'2026-11-09'));
+});

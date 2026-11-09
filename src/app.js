@@ -1,10 +1,29 @@
 'use strict';
 const token='LOCAL_APP_TOKEN';
 const $=id=>document.getElementById(id);
+const language=createLanguage(),t=language.t;
+const imageExports=createImageExporter();
 const currentYear=Number(new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Shanghai'}).slice(0,4));
-$('year').innerHTML='<option value="all">全部年份（2022 年至今）</option>';
-for(let y=currentYear;y>=2022;y--){const option=document.createElement('option');option.value=y;option.textContent=y===currentYear?`${y} 年至今`:`${y} 年`;$('year').append(option);}
-let history=[],rendered='',stopped=false,failures=0;
+const today=new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Shanghai'});
+function years(){
+  const selection=$('year').value||'2026';
+  $('year').replaceChildren();
+  const all=document.createElement('option');all.value='all';all.textContent=t('全部年份（2022 年至今）','All years (2022–present)');$('year').append(all);
+  for(let y=currentYear;y>=2022;y--){const option=document.createElement('option');option.value=y;option.textContent=y===currentYear?t(`${y} 年至今`,`${y} to date`):t(`${y} 年`,String(y));$('year').append(option);}
+  for(const [value,zh,en] of [['month','本月','This month'],['30','最近 30 天','Last 30 days'],['custom','自定义日期','Custom dates']]){const option=document.createElement('option');option.value=value;option.textContent=t(zh,en);$('year').append(option);}
+  $('year').value=selection;
+}
+years();
+for(const id of ['collection-start','collection-end']){ $(id).min='2022-01-01';$(id).max=today; }
+$('collection-start').value='2026-01-01';$('collection-end').value=today;
+$('year').onchange=()=>{
+  const value=$('year').value;
+  $('collection-dates').hidden=!['custom','month','30'].includes(value);
+  if(value==='month'){$('collection-start').value=today.slice(0,7)+'-01';$('collection-end').value=today;}
+  if(value==='30'){const from=new Date(today+'T00:00:00Z');from.setUTCDate(from.getUTCDate()-29);$('collection-start').value=from.toISOString().slice(0,10);$('collection-end').value=today;}
+};
+for(const id of ['collection-start','collection-end'])$(id).onchange=()=>{$('year').value='custom';};
+let history=[],rendered='',stopped=false,failures=0,lastState;
 async function api(path,body){
   const response=await fetch(path,{method:body?'POST':'GET',signal:AbortSignal.timeout(10000),headers:{'X-DKU-App':token,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
   if(!response.ok){const body=await response.json();const error=new Error(body.error||'本机服务未就绪');error.status=response.status;throw error;}
@@ -14,8 +33,39 @@ function link(label,url,download){const a=document.createElement('a');a.textCont
 function showReport(){
   const item=history.find(item=>item.id===$('history').value);
   if(!item)return;
-  $('downloads').replaceChildren(link('查看报告 / EatTI',item.reportURL),link('保存 HTML',item.reportURL+'?download=1',item.reportName),link('导出 JSON',item.dataURL,item.file));
-  $('downloads').querySelectorAll('a').forEach((a,i)=>{if(i)a.classList.add('secondary');});
+  const exports=['card','long'].map(kind=>{
+    const button=document.createElement('button');button.type='button';button.className='secondary share-button';
+    const key=item.id+':'+kind;imageExports.sync(button,key);
+    button.textContent=kind==='card'?t('导出卡片','Export card'):t('导出长图','Export long image');
+    button.onclick=()=>imageExports.run(key,button,()=>exportSaved(item,kind));return button;
+  });
+  const html=link(t('保存 HTML','Save HTML'),item.reportURL+'?download=1',item.reportName),json=link(t('导出 JSON','Export JSON'),item.dataURL,item.file);
+  html.classList.add('secondary');json.classList.add('secondary');
+  $('downloads').replaceChildren(link(t('查看报告 / EatTI','View report / EatTI'),item.reportURL),...exports,html,json);
+}
+async function exportSaved(item,kind){
+  $('export-status').hidden=false;$('export-status').textContent=t('正在生成图片…','Preparing image…');
+  let frame;
+  try{
+    const response=await fetch(item.reportURL);
+    if(!response.ok)throw new Error('report unavailable');
+    const html=await response.text();
+    frame=document.createElement('iframe');frame.hidden=true;frame.title='Image export';
+    await new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(new Error('report load timed out')),15000);
+      frame.onload=()=>{clearTimeout(timer);resolve();};
+      frame.onerror=()=>{clearTimeout(timer);reject(new Error('report unavailable'));};
+      frame.srcdoc=html;document.body.append(frame);
+    });
+    // Reuse the saved report's renderer, filters and typography.
+    const share=frame.contentWindow.dkuReport.share(kind);
+    await saveShareImage(share,share.filename);
+    $('export-status').hidden=imageExports.size===1;
+  }catch{
+    $('export-status').textContent=t('图片生成失败，请打开报告后重试。','Image export failed. Open the report and try again.');
+  }finally{
+    frame?.remove();
+  }
 }
 function showHistory(state){
   const signature=JSON.stringify(state.history);
@@ -26,46 +76,57 @@ function showHistory(state){
   $('history').replaceChildren();
   for(const [index,item] of history.entries()){
     const option=document.createElement('option');option.value=item.id;
-    option.textContent=`${index===0?'最近 · ':''}${item.start} — ${item.end}（${new Date(item.savedAt).toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})} 保存）`;
+    const date=new Date(item.savedAt).toLocaleString(t('zh-CN','en-US'),{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+    option.textContent=`${index===0?t('最近 · ','Latest · '):''}${item.start} — ${item.end} (${t(date+' 保存','saved '+date)})`;
     $('history').append(option);
   }
   if(previousLatest===history[0]?.id&&history.some(item=>item.id===selection))$('history').value=selection;
   $('result').hidden=!history.length;
   $('empty-history').hidden=!!history.length;
-  $('empty-history').textContent='暂无报告';
+  $('empty-history').textContent=t('暂无报告','No saved reports');
   showReport();
 }
 $('history').onchange=showReport;
 $('start').onclick=async()=>{
   $('start').disabled=true;$('status').hidden=false;
-  try{await api('/api/start',{year:$('year').value==='all'?'all':Number($('year').value)});$('status').textContent='正在打开学校登录页面…';}catch(error){$('status').textContent=error.message;$('start').disabled=false;}
+  try{
+    const custom=['custom','month','30'].includes($('year').value),start=$('collection-start').value,end=$('collection-end').value;
+    if(custom&&(!start||!end||start>end||start<'2022-01-01'||end>today))throw new Error(t('请填写有效的起止日期，范围为 2022-01-01 至今天','Enter valid dates between 2022-01-01 and today'));
+    await api('/api/start',custom?{year:'custom',start,end}:{year:$('year').value==='all'?'all':Number($('year').value)});$('status').textContent=t('正在打开学校登录页面…','Opening the campus sign-in page…');
+  }catch(error){$('status').textContent=t(error.message,'Unable to start collection. Check the date range and try again.');$('start').disabled=false;}
 };
-$('cancel').onclick=async()=>{try{await api('/api/cancel',{});$('status').textContent='正在取消…';}catch(error){$('status').textContent=error.message;}};
+$('cancel').onclick=async()=>{try{await api('/api/cancel',{});$('status').textContent=t('正在取消…','Cancelling…');}catch(error){$('status').textContent=t(error.message,'Unable to cancel. Please try again.');}};
 $('quit').onclick=async()=>{
-  try{await api('/api/quit',{});stopped=true;disconnect('工具已退出。已保存的报告仍可通过「查看报告.html」离线打开。');}
-  catch(error){$('status').hidden=false;$('status').textContent=error.message;}
+  try{await api('/api/quit',{});stopped=true;disconnect(t('工具已退出。下次启动后可继续查看已保存的报告。','Tool closed. Your saved reports will be available next time.'));}
+  catch(error){$('status').hidden=false;$('status').textContent=t(error.message,'Unable to close the tool. Please try again.');}
 };
-function disconnect(message){$('status').hidden=false;$('status').textContent=message;$('progress').hidden=true;for(const id of ['start','year','cancel','quit'])$(id).disabled=true;}
+function disconnect(message){$('status').hidden=false;$('status').textContent=message;$('progress').hidden=true;for(const id of ['start','year','collection-start','collection-end','cancel','quit'])$(id).disabled=true;}
 async function poll(){
   if(location.protocol==='file:'){
-    disconnect('采集新数据请双击「启动.cmd」；已有报告可在下方打开。');
-    $('offline-link').hidden=false;$('empty-history').hidden=true;return;
+    disconnect(t('请使用桌面启动器打开工具。','Use the desktop launcher to open the tool.'));
+    $('empty-history').hidden=true;return;
   }
   if(stopped)return;
   try{
-    const state=await (await api('/api/status')).json();failures=0;
+    const state=await (await api('/api/status')).json();lastState=state;failures=0;
     const busy=['preparing','login','collecting'].includes(state.phase);
     $('start').disabled=busy;$('year').disabled=busy;$('quit').disabled=false;$('cancel').disabled=!['login','collecting'].includes(state.phase);
-    $('status').textContent=state.message;
+    $('collection-start').disabled=busy;$('collection-end').disabled=busy;
+    showStatus(state);
     $('status').hidden=state.phase==='ready';$('progress').hidden=!busy;
-    $('history-warning').textContent=(state.warnings||[]).join('\n');
+    $('history-warning').textContent=t((state.warnings||[]).join('\n'),'Some saved files could not be loaded. Please check the files in the report library.');
     $('history-warning').hidden=!state.warnings?.length;
     if(state.pages){$('progress').max=state.pages;$('progress').value=state.page||0;}else{$('progress').max=1;$('progress').value=state.phase==='complete'?1:0;}
     showHistory(state);
   }catch(error){
     failures++;
-    disconnect(error.status===403?'工具可能已重新启动，当前页面的连接已过期。请刷新此页恢复连接；已保存的报告不受影响。':'本机采集服务未连接。已保存的数据仍在：双击「查看报告.html」离线查看；双击「启动.cmd」恢复采集。');
+    disconnect(error.status===403?t('工具可能已重新启动，当前页面的连接已过期。请刷新此页恢复连接；已保存的报告不受影响。','This connection has expired. Refresh the page to reconnect; saved reports are available.'):t('本机采集服务未连接，请使用桌面启动器重新打开工具。','Local service disconnected. Restart the tool with the desktop launcher.'));
   }
   if(!stopped)setTimeout(poll,failures?Math.min(1000*2**Math.min(failures,4),15000):1500);
 }
+function showStatus(state){
+  const messages={ready:'Ready',preparing:'Preparing the browser…',login:'Sign in on the campus page to continue.',collecting:`Collecting records${state.pages?' · '+(state.page||0)+' / '+state.pages:''}…`,complete:'Collection complete. Your report is ready.',error:'Collection stopped. You can open a saved report or try again.'};
+  $('status').textContent=t(state.message,messages[state.phase]||state.message);
+}
+language.onChange(()=>{years();rendered='';if(lastState){showHistory(lastState);showStatus(lastState);}});
 void poll();

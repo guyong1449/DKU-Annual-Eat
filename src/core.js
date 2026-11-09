@@ -22,6 +22,13 @@
 
   function queryRange(year,today) {
     if(!validDate(today))throw new Error('当前日期无效');
+    if(year&&typeof year==='object'){
+      const {start,end}=year;
+      if(!validDate(start)||!validDate(end))throw new Error('请填写有效的开始和结束日期');
+      if(start>end)throw new Error('开始日期不能晚于结束日期');
+      if(start<'2022-01-01'||end>today)throw new Error('日期范围需在 2022-01-01 至今天之间');
+      return {start,end,label:'custom'};
+    }
     const current=Number(today.slice(0,4));
     if(year!=='all'&&(!Number.isInteger(year)||year<2022||year>current))throw new Error('请选择 2022 年起的年份或全部年份');
     return {start:year==='all'?'2022-01-01':`${year}-01-01`,end:year==='all'||year===current?today:`${year}-12-31`,label:String(year)};
