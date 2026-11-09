@@ -23,7 +23,7 @@ function createEatTI() {
     {id:'DAWN',axis:'时段',name:'早餐起跑员',en:'The Breakfast Believer',quote:'早饭这事，绝不迟到',quoteEn:'Breakfast gets first dibs.',story:'别人还在被窝里跟闹钟讨价还价，你已经朝早餐窗口出发。新的一天可以有很多变数，但先吃点东西这件事，你很有主见。',storyEn:'You\'re not here to romanticize mornings; you\'re here for breakfast. Whatever the day throws at you, at least it starts with a good bite.',prop:'sun',rule:'08:00–09:59 的刷卡最多。',ruleEn:'Most swipes land 08:00–09:59.'},
     {id:'NOON',axis:'时段',name:'正午干饭王',en:'The Lunch Hour MVP',quote:'到了中午，吃饭最大',quoteEn:'Noon is non-negotiable.',story:'课表再满，中午总得给饭留个位置。人一到食堂，今天最重要的会议正式开始：吃饭。',storyEn:'Classes, deadlines, group projects — whatever. When lunchtime rolls around, you know exactly where your priorities lie.',prop:'clock',rule:'11:00–13:00 的刷卡最多。',ruleEn:'Most swipes land 11:00–13:00.'},
     {id:'DUSK',axis:'时段',name:'傍晚开饭派',en:'The Dinner Devotee',quote:'忙完了？开饭！',quoteEn:'Dinner is your daily exhale.',story:'白天被课程和待办挤得满满当当，傍晚终于轮到饭香出场。端起餐盘那一刻，今天就有了个挺像样的收尾。',storyEn:'Your favorite way to wind down comes with a tray. Dinner is the part where the day\'s chaos finally takes a back seat.',prop:'bowl',rule:'17:00–19:30 的刷卡最多。',ruleEn:'Most swipes land 17:00–19:30.'},
-    {id:'EDGE',axis:'时间核对',name:'错峰干饭侠',en:'The Off Peak Diner',quote:'谁规定饭要按点吃？',quoteEn:'Your clock, your cravings.',story:'午餐过了 13 点、晚餐过了 18 点半，再从容走向窗口。人潮散一点，节奏慢一点，错开最热闹的时候，这顿饭也有了自己的时区。',storyEn:'Lunch after one, or dinner after half past six: you prefer a quieter trip to the counter. With fewer people and a little more time, your meal follows its own clock.',prop:'ticket',rule:'13:01–16:59 与 18:31 之后的刷卡合计最多',ruleEn:'Swipes at 13:01–16:59 and after 18:30 together lead all meal groups'},
+    {id:'EDGE',axis:'时间核对',name:'错峰干饭侠',en:'The Off Peak Diner',quote:'谁规定饭要按点吃？',quoteEn:'Your clock, your cravings.',story:'上午加个餐，午餐过了 13 点、晚餐过了 18 点半，再从容走向窗口。人潮散一点，节奏慢一点，错开最热闹的时候，这顿饭也有了自己的时区。',storyEn:'A morning bite, lunch after one, or dinner after half past six: you prefer a quieter trip to the counter. With fewer people and a little more time, your meal follows its own clock.',prop:'ticket',rule:'10:00–10:59、13:01–16:59 与 18:31 之后的刷卡合计最多',ruleEn:'Swipes at 10:00–10:59, 13:01–16:59 and after 18:30 together lead all meal groups'},
     {id:'SAVE',axis:'花费',name:'小额快乐家',en:'The Small Spend Pro',quote:'花得少，快乐照样满格',quoteEn:'Small bill. Solid win.',story:'账单上的数字小小的，干饭的快乐可没缩水。精打细算也是一种本事，你总能让小小一笔花得挺值。',storyEn:'You know how to keep a food run light on the wallet. Big satisfaction doesn\'t always need a big receipt.',prop:'calculator',rule:'单笔 ≤¥15 的刷卡最多。',ruleEn:'Most swipes cost ¥15 or less.'},
     {id:'JUST',axis:'花费',name:'刚刚好',en:'The Sweet Spot Expert',quote:'不上头，刚刚好',quoteEn:'Right in the sweet spot.',story:'十几二十块的一餐，是你最熟悉的舒适区。既不用为了省钱纠结半天，也不用每顿都搞出大场面，吃得自在就很不错。',storyEn:'You\'re somewhere between bargain hunting and going all out. Enough to enjoy yourself, without making a whole production out of lunch.',prop:'tray',rule:'单笔 ¥15–30 的刷卡最多。',ruleEn:'Most swipes cost between ¥15 and ¥30.'},
     {id:'TREAT',axis:'花费',name:'嚼嚼嚼',en:'The Treat Yourself Type',quote:'吃顿好的，理直气壮',quoteEn:'A little extra? Absolutely.',story:'三十块往上的单子，你刷得挺有底气。普通的一顿饭到了你这里，也值得认真安排点仪式感。',storyEn:'If you\'re getting a meal, you might as well make it count. Who says an ordinary Tuesday can\'t feel like a special occasion?',prop:'crown',rule:'单笔 ≥¥30 的刷卡占比达到 15%',ruleEn:'At least 15% of swipes cost ¥30 or more'}
@@ -194,16 +194,16 @@ function createEatTI() {
     candidates[0].score=route==='HOME'?share/.6:route==='ROAM'?(1-share)/.6:1;
     candidates[1].score=(times[time]/count)/(time===3?.15:.2);
     candidates[2].score=(amounts[amount]/count)/(amount===2?.15:1/3);
-    // Off-peak is a separate comparison across late lunch and late dinner.
+    // Off-peak combines morning bites, late lunch and late dinner.
     if(time===1||time===5)candidates.splice(1,1);
     const add=(id,n,threshold,evidence,headline)=>candidates.push({...role(id,evidence,headline),score:(n/count)/threshold});
     const lateDinner=rows.filter(r=>minuteOf(r)>18*60+30).length;
-    const lateCount=times[3]+lateDinner;
+    const offPeakCount=times[1]+times[3]+lateDinner;
     const dinnerOnTime=rows.filter(r=>minuteOf(r)>=17*60&&minuteOf(r)<=18*60+30).length;
     const earlyHours=rows.filter(r=>minuteOf(r)<service.open).length;
-    if(lateCount&&lateCount>=Math.max(times[0],times[1],times[2],dinnerOnTime,earlyHours))add('EDGE',lateCount,.2,
-      {zh:`13:01–16:59 与 18:31 之后合计 ${lateCount} 次刷卡，占 ${pct(lateCount,count)}%，在各餐段中最多`,en:`13:01–16:59 and after 18:30 total ${lateCount} swipes (${pct(lateCount,count)}%), leading all meal groups`},
-      {zh:`错峰 · ${pct(lateCount,count)}%`,en:`Off peak · ${pct(lateCount,count)}%`});
+    if(offPeakCount&&offPeakCount>=Math.max(times[0],times[2],dinnerOnTime,earlyHours))add('EDGE',offPeakCount,.2,
+      {zh:`10:00–10:59、13:01–16:59 与 18:31 之后合计 ${offPeakCount} 次刷卡，占 ${pct(offPeakCount,count)}%，在各餐段中最多`,en:`10:00–10:59, 13:01–16:59 and after 18:30 total ${offPeakCount} swipes (${pct(offPeakCount,count)}%), leading all meal groups`},
+      {zh:`错峰 · ${pct(offPeakCount,count)}%`,en:`Off peak · ${pct(offPeakCount,count)}%`});
     if(time!==3&&times[3]/count>=.15)add('TEA',times[3],.15,
       {zh:`${i18n.zh.timeParts[3]}贡献了 ${times[3]} 次刷卡，占 ${pct(times[3],count)}%`,en:`${i18n.en.timeParts[3]} accounts for ${times[3]} swipes — ${pct(times[3],count)}%`},
       {zh:`下午加餐 · ${pct(times[3],count)}%`,en:`Afternoon bites · ${pct(times[3],count)}%`});

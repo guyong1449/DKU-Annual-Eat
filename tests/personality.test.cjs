@@ -307,15 +307,23 @@ test('dining distributions are available below the personality sample threshold 
   assert.ok(new Set(ready.distributions[1].parts.map(p=>p.color)).size===6);
 });
 
-test('off-peak combines late lunch and dinner with exact clock boundaries',()=>{
+test('off-peak combines morning bites, late lunch and dinner with exact clock boundaries',()=>{
   const sample=hours=>hours.map((hour,i)=>row(i,{time:`2025-01-${String(i+1).padStart(2,'0')} ${hour}`}));
-  for(const hour of ['10:00','10:59','13:00','18:30','09:59','11:00','07:59'])assert.ok(!eat.analyze(sample(Array(6).fill(hour))).candidates.some(t=>t.id==='EDGE'),hour);
-  for(const hour of ['13:01','16:59','18:31','19:31'])assert.ok(eat.analyze(sample(Array(6).fill(hour))).candidates.some(t=>t.id==='EDGE'),hour);
+  for(const hour of ['13:00','18:30','09:59','11:00','07:59'])assert.ok(!eat.analyze(sample(Array(6).fill(hour))).candidates.some(t=>t.id==='EDGE'),hour);
+  for(const hour of ['10:00','10:59','13:01','16:59','18:31','19:31'])assert.ok(eat.analyze(sample(Array(6).fill(hour))).candidates.some(t=>t.id==='EDGE'),hour);
   const combined=eat.analyze(sample(['13:01','14:00','18:31','19:00','12:00','12:00','17:30','17:30']));
   assert.match(combined.candidates.find(t=>t.id==='EDGE').evidence.zh,/合计 4 次/);
   assert.equal(combined.distributions[1].parts[4].count,4);
   const morning=sample(['10:00','10:01','10:02','10:03','13:01','18:31']);
-  assert.ok(!eat.analyze(morning).candidates.some(t=>t.id==='EDGE'));
+  const morningResult=eat.analyze(morning);
+  const morningRole=morningResult.candidates.find(t=>t.id==='EDGE');
+  assert.ok(morningRole);
+  assert.match(morningRole.evidence.zh,/合计 6 次/);
+  assert.match(morningRole.evidence.en,/total 6 swipes/);
+  assert.match(morningRole.rule,/10:00–10:59/);
+  for(const lang of ['zh','en']){
+    assert.match(eat.shareSVG(morningResult,lang,'2025','card',illustrations).svg,/10:00–10:59/);
+  }
 });
 
 test('weekend matching includes exactly 20% and still requires six swipes',()=>{
