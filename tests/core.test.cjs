@@ -22,6 +22,22 @@ test('successful refunds offset consumption; top-ups and failed rows are exclude
   assert.equal(summary.total,20); assert.equal(summary.gross,20); assert.equal(summary.returned,0); assert.equal(summary.refunds.length,0); assert.equal(summary.expenses.length,1); assert.equal(summary.excluded.length,5);
   assert.equal(summary.months.length,12); assert.equal(summary.months[1][1],0);
 });
+
+test('the observed English success status counts charges and refunds without changing source values',()=>{
+  const input=data([
+    row('charge',-1200,{type:'Expense',status:'Transaction Successful!'}),
+    row('refund',200,{type:'Refund',status:'Transaction Successful!',time:'2025-01-03 12:10'}),
+    row('failed',-900,{type:'Expense',status:'Transaction Failed!'}),
+    row('unsuccessful',-800,{type:'Expense',status:'Transaction Unsuccessful!'}),
+    row('topup',10000,{type:'WeChat Top up 微信充值',status:'Transaction Successful!'})
+  ]);
+  const summary=core.summarize(input);
+  assert.equal(summary.total,1000);
+  assert.equal(summary.expenses.length,1);
+  assert.equal(summary.refunds.length,1);
+  assert.equal(summary.excluded.length,3);
+  assert.equal(summary.data.records.find(r=>r.id==='charge').status,'Transaction Successful!');
+});
 test('duplicate IDs are removed, conflicting records fail closed', () => {
   assert.equal(core.summarize(data([row('1',-10),row('1',-10)])).total,10);
   assert.throws(() => core.summarize(data([row('1',-10),row('1',-20)])), /不同记录/);

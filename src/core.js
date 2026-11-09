@@ -99,12 +99,16 @@
     return /^(?:pharos\s+printing(?:\s+校园打印)?|校园打印)$/i.test(row.merchant.trim());
   }
 
+  function isSuccessful(status) {
+    return /^(?:交易成功|成功|Success|Successful|Transaction successful)[!！。.]?$/i.test(status.trim());
+  }
+
   function isExpense(row) {
-    return !isPrinting(row) && /^(交易成功|成功|Success|Successful|Transaction successful)$/i.test(row.status) && /^(Expense\s*消费|消费|Expense)$/i.test(row.type) && row.cents < 0;
+    return !isPrinting(row) && isSuccessful(row.status) && /^(Expense\s*消费|消费|Expense)$/i.test(row.type) && row.cents < 0;
   }
 
   function isRefund(row) {
-    return !isPrinting(row) && /^(交易成功|成功|Success|Successful|Transaction successful)$/i.test(row.status) && /^(Expense Canceled(?:\s*消费冲正)?|消费冲正|Refund(?:\s*退款)?|退款|Discount Refund(?:\s*折扣返还)?|折扣返还)$/i.test(row.type) && row.cents > 0;
+    return !isPrinting(row) && isSuccessful(row.status) && /^(Expense Canceled(?:\s*消费冲正)?|消费冲正|Refund(?:\s*退款)?|退款|Discount Refund(?:\s*折扣返还)?|折扣返还)$/i.test(row.type) && row.cents > 0;
   }
 
   function summarize(input) {

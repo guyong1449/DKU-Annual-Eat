@@ -5,6 +5,15 @@ const {reportModel}=require('../src/report.js');
 const renderReport=require('./report-harness.cjs');
 const row=(id,merchant,cents,time='2025-01-10 12:00',type='Expense 消费')=>({id,merchant,cents,time,type,status:'交易成功'});
 const dataset=records=>({version:1,source:'dkucard',start:'2025-01-01',end:'2026-12-31',account:'所有账户',complete:true,records});
+
+test('English campus statuses populate both financial totals and EatTI after collection',()=>{
+  const records=Array.from({length:6},(_,i)=>({...row(String(i),'面档',-1200,`2026-01-0${i+1} 12:00`,'Expense'),status:'Transaction Successful!'}));
+  const {element}=renderReport(core.reportHTML(dataset(records)),{'dku-lang':'en'});
+  assert.match(element('net').innerHTML,/72\.00/);
+  assert.equal(Number(element('count').textContent),6);
+  assert.match(element('eat-sample').textContent,/6/);
+  assert.match(element('eat-result').innerHTML,/The Lunch Hour MVP/);
+});
 test('window month series reconcile with each annual total and maintain refund posting dates',()=>{
   const s=core.summarize(dataset([row('a','面档',-1000),row('b','面档',100,'2025-02-10 12:00','Refund 退款'),row('c','咖啡',-2000),row('d','pharos printing 校园打印',-3000),row('e','面档',-500,'2026-01-01 12:00')]));
   const model=reportModel(s);
