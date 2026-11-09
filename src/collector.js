@@ -31,8 +31,16 @@
     return core.validateDataset({version:1, source:'dkucard', start, end, account, complete:true, records});
   }
 
-  function browserReader({form, start, end, accountValue, signal}) {
+  function findSearchForm(doc = document) {
+    return Array.from(doc.forms).find(form => {
+      const action = new URL(form.getAttribute('action') || '', doc.baseURI);
+      return action.origin === 'https://dkucard.dukekunshan.edu.cn' && action.pathname === '/dku/searchmydtl';
+    }) || null;
+  }
+
+  function browserReader({form = findSearchForm(), start, end, accountValue, signal}) {
     if (location.origin !== 'https://dkucard.dukekunshan.edu.cn') throw new Error('请在 DKU 校园卡网站运行');
+    if (!form) throw new Error('未找到校园卡查询表单，请刷新校园卡页面并登录');
     const endpoint = new URL(form.getAttribute('action'), location.href);
     if (endpoint.origin !== location.origin || endpoint.pathname !== '/dku/searchmydtl') throw new Error('查询入口已变化');
     const fields = new URLSearchParams(new FormData(form));
@@ -64,7 +72,7 @@
       }
     };
   }
-  const api = {collect, browserReader};
+  const api = {collect, browserReader, findSearchForm};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.DKUCollector = api;
 })(typeof window === 'undefined' ? globalThis : window);

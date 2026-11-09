@@ -34,7 +34,11 @@ class CDP {
   }
   async evaluate(expression,sessionId) {
     const response=await this.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:false},sessionId);
-    if(response.exceptionDetails)throw new Error('页面执行失败，请刷新校园卡页面后重试');
+    if(response.exceptionDetails){
+      const details=response.exceptionDetails;
+      const message=(details.exception?.description||details.text||'页面执行失败，请刷新校园卡页面后重试').split('\n')[0];
+      throw new Error(message.replace(/^(?:Error|TypeError):\s*/,''));
+    }
     return response.result?.value;
   }
 }

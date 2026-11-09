@@ -6,6 +6,7 @@ const {spawn}=require('node:child_process');
 const {CDP}=require('./cdp.cjs');
 const {ReportLibrary}=require('./library.cjs');
 const {browserCandidates}=require('./platform.cjs');
+const {collectInBrowser}=require('./collection.cjs');
 const core=require('../src/core.js');
 const root=path.resolve(__dirname,'..');
 const privateDir=path.join(root,'private');
@@ -24,8 +25,7 @@ function openBrowser(url,debug=false){
   if(!browserPath)throw new Error('未找到 Chrome 或 Edge，请先安装其中一个浏览器');
   const args=[`--user-data-dir=${profile}`,'--no-first-run','--no-default-browser-check'];
   if(debug){
-    // A stale file can point at the previous browser's closed debugging port.
-    fs.rmSync(path.join(profile,'DevToolsActivePort'),{force:true});
+    // Chrome reuses a running profile and does not rewrite its connection file.
     args.push('--remote-debugging-address=127.0.0.1','--remote-debugging-port=0');
   }
   args.push(url);
@@ -44,59 +44,34 @@ async function connectBrowser(){
   throw new Error('专用浏览器未就绪。请关闭本工具的专用窗口，再双击启动。');
 }
 function setState(phase,message,extra={}){state={phase,message,...extra};log(phase);}
-async function isCardPage(){
-  if(!activeTarget)return false;
-  const {targetInfo}=await client.send('Target.getTargetInfo',{targetId:activeTarget});
-  const url=new URL(targetInfo.url);
-  return url.origin==='https://dkucard.dukekunshan.edu.cn' && url.pathname==='/dku/index';
-}
 async function startJob({start,end,label}){
   activeJob=true;cancelled=false;
   try{
     setState('login','请在打开的校园卡标签页完成学校登录。完成后会自动读取，无需复制任何内容。');
     ({targetId:activeTarget}=await client.send('Target.createTarget',{url:entry}));
     ({sessionId:activeSession}=await client.send('Target.attachToTarget',{targetId:activeTarget,flatten:true}));
-    const deadline=Date.now()+10*60*1000;
-    let ready=false;
-    while(Date.now()<deadline){
-      if(cancelled)throw new Error('已取消');
-      if(await isCardPage())ready=await client.evaluate("!!(document.querySelector('#searchForm input[name=_csrf]') && document.querySelector('#pdata .nyu-table'))",activeSession);
-      if(ready)break;
-      await delay(1000);
-    }
-    if(!ready)throw new Error('等待登录超过 10 分钟，请点击开始重试');
-    setState('collecting','登录成功，正在读取交易记录…');
     const sources=['core.js','collector.js'].map(file=>fs.readFileSync(path.join(root,'src',file),'utf8')).join('\n');
-    await client.evaluate(sources,activeSession);
-    await client.evaluate(`window.__dkuAppAbort=new AbortController();window.__dkuAppProgress={phase:'collecting'};DKUCollector.collect({start:${JSON.stringify(start)},end:${JSON.stringify(end)},account:'所有账户',signal:window.__dkuAppAbort.signal,readPage:DKUCollector.browserReader({form:document.querySelector('#searchForm'),start:${JSON.stringify(start)},end:${JSON.stringify(end)},accountValue:'',signal:window.__dkuAppAbort.signal}),progress:p=>window.__dkuAppProgress={phase:'collecting',...p}}).then(data=>{window.__dkuAppData=data;window.__dkuAppProgress={phase:'complete'}}).catch(error=>window.__dkuAppProgress={phase:'error',message:error.message});void 0;`,activeSession);
-    const collectionDeadline=Date.now()+30*60*1000;
-    while(Date.now()<collectionDeadline){
-      if(cancelled)throw new Error('已取消');
-      if(!await isCardPage())throw new Error('校园卡页面已离开或登录过期，请点击开始重试');
-      const progress=await client.evaluate('window.__dkuAppProgress',activeSession);
-      if(progress?.phase==='error')throw new Error(progress.message);
-      if(progress?.phase==='complete'){
-        const collected=core.validateDataset(await client.evaluate('window.__dkuAppData',activeSession));
-        const summary=core.summarize(collected);
-        const saved=library.save(collected,label);
-        result=collected;
-        library.publish(origin);
-        const {reportURL}=saved;
-        setState('complete',`已完成 · ${result.records.length} 条记录 · 净消费 ¥ ${core.money(summary.total)}`,{count:result.records.length,expenseCount:summary.expenses.length,refundCount:summary.refunds.length,total:core.money(summary.total),excluded:summary.excluded.length,...saved});
-        try{
-          const {targetId}=await client.send('Target.createTarget',{url:origin+reportURL});
-          await client.send('Target.activateTarget',{targetId});
-        }catch{state.openWarning='报告已保存。自动打开未成功，请点击「查看年度报告」。';}
-        return;
+    const collected=await collectInBrowser({
+      client,targetId:activeTarget,sessionId:activeSession,sources,start,end,
+      cancelled:()=>cancelled,
+      onState(next){
+        if(state.phase!==next.phase)setState(next.phase,next.message,next);
+        else state=next;
       }
-      state={phase:'collecting',message:`正在读取 ${progress?.page||0} / ${progress?.pages||'?'} 页，共 ${progress?.count||0} 条记录。`,...progress};
-      await delay(750);
-    }
-    throw new Error('采集超过 30 分钟，请缩小范围后重试');
+    });
+    if(cancelled)throw new Error('已取消');
+    const summary=core.summarize(collected);
+    const saved=library.save(collected,label);
+    result=collected;
+    library.publish(origin);
+    setState('complete',`已完成 · ${result.records.length} 条记录 · 净消费 ¥ ${core.money(summary.total)}`,{count:result.records.length,expenseCount:summary.expenses.length,refundCount:summary.refunds.length,total:core.money(summary.total),excluded:summary.excluded.length,...saved});
+    try{
+      const {targetId}=await client.send('Target.createTarget',{url:origin+saved.reportURL});
+      await client.send('Target.activateTarget',{targetId});
+    }catch{state.openWarning='报告已保存。自动打开未成功，请点击「查看年度报告」。';}
   }catch(error){
     setState('error',cancelled?'已取消，未生成部分报告。':error.message);
   }finally{
-    if(activeSession){try{if(await isCardPage())await client.evaluate('window.__dkuAppAbort?.abort();delete window.__dkuAppData;',activeSession);}catch{}}
     if(activeSession){try{await client.send('Target.detachFromTarget',{sessionId:activeSession});}catch{}}
     activeSession=null;activeTarget=null;
     activeJob=false;

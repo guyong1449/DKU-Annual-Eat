@@ -93,7 +93,7 @@ $('start').onclick=async()=>{
     const custom=['custom','month','30'].includes($('year').value),start=$('collection-start').value,end=$('collection-end').value;
     if(custom&&(!start||!end||start>end||start<'2022-01-01'||end>today))throw new Error(t('请填写有效的起止日期，范围为 2022-01-01 至今天','Enter valid dates between 2022-01-01 and today'));
     await api('/api/start',custom?{year:'custom',start,end}:{year:$('year').value==='all'?'all':Number($('year').value)});$('status').textContent=t('正在打开学校登录页面…','Opening the campus sign-in page…');
-  }catch(error){$('status').textContent=t(error.message,'Unable to start collection. Check the date range and try again.');$('start').disabled=false;}
+  }catch(error){$('status').textContent=collectionError(error.message);$('start').disabled=false;}
 };
 $('cancel').onclick=async()=>{try{await api('/api/cancel',{});$('status').textContent=t('正在取消…','Cancelling…');}catch(error){$('status').textContent=t(error.message,'Unable to cancel. Please try again.');}};
 $('quit').onclick=async()=>{
@@ -125,8 +125,37 @@ async function poll(){
   if(!stopped)setTimeout(poll,failures?Math.min(1000*2**Math.min(failures,4),15000):1500);
 }
 function showStatus(state){
-  const messages={ready:'Ready',preparing:'Preparing the browser…',login:'Sign in on the campus page to continue.',collecting:`Collecting records${state.pages?' · '+(state.page||0)+' / '+state.pages:''}…`,complete:'Collection complete. Your report is ready.',error:'Collection stopped. You can open a saved report or try again.'};
-  $('status').textContent=t(state.message,messages[state.phase]||state.message);
+  const messages={ready:'Ready',preparing:'Preparing the browser…',login:'Sign in on the campus page. Collection will continue automatically when it is ready.',collecting:`Collecting records${state.pages?' · '+(state.page||0)+' / '+state.pages:''}…`,complete:'Collection complete. Your report is ready.'};
+  $('status').textContent=state.phase==='error'?collectionError(state.message):t(state.message,messages[state.phase]||state.message);
+}
+function collectionError(message){
+  const messages={
+    '已取消':'Collection cancelled.',
+    '已取消，未生成部分报告。':'Collection cancelled. No partial report was saved.',
+    '等待登录超过 10 分钟，请点击开始重试':'Sign-in timed out after 10 minutes. Start collection again.',
+    '校园卡页面反复跳转，请完成登录后重试':'The campus page keeps reloading. Finish signing in and try again.',
+    '采集超过 30 分钟，请缩小范围后重试':'Collection timed out after 30 minutes. Choose a shorter date range and try again.',
+    '专用浏览器已关闭':'The dedicated browser was closed. Reopen the tool and try again.',
+    '专用浏览器未连接':'The dedicated browser is disconnected. Reopen the tool and try again.',
+    '浏览器正在准备、已关闭或已有采集任务。请重新启动工具后重试。':'The browser is unavailable or another collection is running. Wait for it to finish or reopen the tool.',
+    '未返回交易表格。请刷新校园卡页面并完成登录后重试。':'The campus site returned no transaction table. Refresh the campus page and sign in again.',
+    '学校交易表头已变化，已停止采集':'The campus transaction columns have changed. Collection stopped.',
+    '出现无法识别的交易行，已停止采集':'The campus site returned an unrecognized transaction row. Collection stopped.',
+    '无法识别交易时间或交易号，已停止采集':'A transaction date or ID could not be read. Collection stopped.',
+    '未找到分页信息，无法保证记录完整':'Pagination information is missing. Collection stopped to avoid an incomplete report.',
+    '分页信息异常':'The campus site returned invalid pagination information.',
+    '页码或总页数发生变化，请重新采集':'The page number or total page count changed. Start collection again.',
+    '中间页记录不完整，已停止采集':'A transaction page is incomplete. Start collection again.',
+    '出现空页，已停止采集':'An unexpected empty transaction page was returned. Start collection again.',
+    '分页出现重复交易号，可能有新交易插入，请重新采集':'Transaction pages overlap, possibly because new records were added. Start collection again.',
+    '采集期间记录发生变化，请重新采集':'Transactions changed during collection. Start collection again.',
+    '查询超过 20 秒，请稍后重试':'The campus query timed out after 20 seconds. Try again later.',
+    '连接中断或登录已过期，请刷新校园卡页面并完成登录后重试':'The campus connection was interrupted or sign-in expired. Refresh the campus page and sign in again.',
+    '未找到校园卡查询表单，请刷新校园卡页面并登录':'The campus query form is missing. Refresh the campus page and sign in again.',
+    '页面缺少校验信息，请刷新校园卡页面并登录':'The campus page is missing its verification token. Refresh it and sign in again.',
+    '查询入口已变化':'The campus query endpoint has changed.'
+  };
+  return t(message,messages[message]||message);
 }
 language.onChange(()=>{years();rendered='';if(lastState){showHistory(lastState);showStatus(lastState);}});
 void poll();

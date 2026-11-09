@@ -56,17 +56,17 @@
     const rows = [];
     for (const tr of table.querySelectorAll('tbody tr')) {
       const cells = Array.from(tr.children).filter(el => el.tagName === 'TD');
-      if (cells.length === 1 && cells[0].getAttribute('colspan') === '5' && cells[0].textContent.trim() === '暂无交易记录') continue;
+      if (cells.length === 1 && cells[0].getAttribute('colspan') === '5' && /^(?:暂无交易记录|No (?:transaction )?records?(?: found)?|No transactions?(?: found)?|No data(?: available| found)?)\.?$/i.test(cells[0].textContent.trim())) continue;
       if (cells.length !== 5) throw new Error('出现无法识别的交易行，已停止采集');
       const values = cells.map(el => el.innerHTML.replace(/<br\s*\/?\s*>/gi, ' ')).map(value => {
         const node = doc.createElement('span'); node.innerHTML = value; return node.textContent.replace(/\s+/g, ' ').trim();
       });
       const time = /^(\d{4})[.-](\d{2})[.-](\d{2})\s+(\d{2}:\d{2})$/.exec(values[0]);
-      const identity = /^(.*?)\s*(?:交易号|Transaction\s*(?:No\.?|ID))\s*[:：]\s*(\S+)$/i.exec(values[1]);
+      const identity = /^(.*?)\s*(?:交易号|Transaction\s*(?:No\.?|ID|Number))\s*[:：]\s*(\S+)$/i.exec(values[1]);
       if (!time || !identity) throw new Error('无法识别交易时间或交易号，已停止采集');
       rows.push(validateRecord({id:identity[2], time:`${time[1]}-${time[2]}-${time[3]} ${time[4]}`, type:identity[1].trim(), merchant:values[2], cents:amountToCents(values[3]), status:values[4]}));
     }
-    const pager = /Page\s*(\d+)\s*\/\s*(\d+)/i.exec(doc.body.textContent);
+    const pager = /Page\s*(\d+)\s*(?:\/|of)\s*(\d+)/i.exec(doc.body.textContent);
     if (!pager && rows.length) throw new Error('未找到分页信息，无法保证记录完整');
     const page = pager ? Number(pager[1]) : 1;
     const pages = pager ? Number(pager[2]) : 1;

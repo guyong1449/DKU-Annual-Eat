@@ -7,12 +7,12 @@ const source=fs.readFileSync(path.join(__dirname,'../src/app.js'),'utf8');
 const {createLanguage}=require('../src/language.js');
 const {createImageExporter}=require('../src/share.js');
 const snapshot={id:'a',start:'2025-01-01',end:'2025-12-31',savedAt:'2026-09-13T12:00:00Z',count:3,file:'dku-a.json',reportName:'dku-a.html',reportURL:'/report/a',dataURL:'/data/a'};
-function harness(protocol='http:',saveImage=async()=>{}){
+function harness(protocol='http:',saveImage=async()=>{},stored={}){
   const exports=[];
   function element(tag){const el={value:'',children:[],hidden:true,disabled:false,dataset:{},setAttribute(){},classList:{add(){}},append(child){this.children.push(child);if(!this.value)this.value=child.value;},remove(){this.removed=true;},replaceChildren(...children){this.children=children;this.value='';},querySelectorAll(){return this.children;}};if(tag==='iframe')el.contentWindow={dkuReport:{share:kind=>({src:el.srcdoc,kind:'report-'+kind})}};return el;}
   const elements=new Map();const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
   let state={phase:'ready',message:'已恢复',history:[snapshot]},fail=false;const requests=[],bodies=[];
-  const context=vm.createContext({document:{documentElement:{},querySelectorAll(){return [];},body:{append:frame=>Promise.resolve().then(()=>frame.onload())},getElementById:get,createElement:element},saveShareImage:async share=>{exports.push(share);await saveImage(share);},location:{protocol},AbortSignal,Date,setTimeout(){},clearTimeout(){},fetch:async(url,options)=>{
+  const context=vm.createContext({document:{documentElement:{},querySelectorAll(){return [];},body:{append:frame=>Promise.resolve().then(()=>frame.onload())},getElementById:get,createElement:element},localStorage:{getItem:key=>stored[key],setItem(key,value){stored[key]=value;}},saveShareImage:async share=>{exports.push(share);await saveImage(share);},location:{protocol},AbortSignal,Date,setTimeout(){},clearTimeout(){},fetch:async(url,options)=>{
     requests.push(url);if(options?.body)bodies.push(JSON.parse(options.body));if(fail===403)return {ok:false,status:403,json:async()=>({error:'请从本工具窗口操作'})};if(fail)throw new Error('offline');
     return {ok:true,json:async()=>state,text:async()=>url};
   }});
@@ -29,6 +29,30 @@ test('history remains accessible while collecting, after cancellation and after 
   await app.tick(null,true);assert.equal(app.get('result').hidden,false);
   assert.match(app.get('status').textContent,/桌面启动器/);assert.equal(app.get('quit').disabled,true);
   await app.tick(null,403);assert.match(app.get('status').textContent,/请刷新此页/);
+});
+
+test('a saved English preference can start collection and retains actionable errors',async()=>{
+  const app=harness('http:',async()=>{},{'dku-lang':'en'});
+  await app.tick();
+  assert.equal(app.get('year').value,'2026');
+  assert.equal(app.get('start').disabled,false);
+  await app.get('start').onclick();
+  assert.deepEqual(app.bodies.at(-1),{year:2026});
+  await app.tick({phase:'login',message:'请登录',history:[snapshot]});
+  assert.equal(app.get('start').disabled,true);
+  assert.equal(app.get('cancel').disabled,false);
+  assert.match(app.get('status').textContent,/automatically/);
+  await app.tick({phase:'error',message:'等待登录超过 10 分钟，请点击开始重试',history:[snapshot]});
+  assert.match(app.get('status').textContent,/Sign-in timed out after 10 minutes/);
+  assert.equal(app.get('start').disabled,false);
+  await app.tick({phase:'error',message:'School query failed (HTTP 503)',history:[snapshot]});
+  assert.match(app.get('status').textContent,/HTTP 503/);
+  app.get('year').value='custom';app.get('year').onchange();
+  app.get('collection-start').value='2026-02-01';app.get('collection-end').value='2026-01-01';
+  const requests=app.bodies.length;
+  await app.get('start').onclick();
+  assert.equal(app.bodies.length,requests);
+  assert.match(app.get('status').textContent,/Enter valid dates/);
 });
 test('empty history is explicit and direct file opening never calls the local API',async()=>{
   const empty=harness();await empty.tick({phase:'ready',message:'就绪',history:[]});
