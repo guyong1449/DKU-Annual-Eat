@@ -4,13 +4,25 @@
 
 <a name="language-chinese"></a>
 
-## 简体中文
-
 DKU Annual Eat 将昆山杜克大学的校园卡消费记录整理成年度报告。你可以按年份、月份或自选日期查看消费金额、窗口排行和用餐习惯，也可以看看 Eat TI · 饭格彩蛋，导出卡片、长图或打印报告。记录保存在本机，不会上传到项目服务器。
 
 [下载 v1.4.0 正式版](https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.4.0)。
 
-### 安装浏览器插件（推荐）
+<a name="report-previews"></a>
+
+## 报告预览
+
+<p>
+  <img src="docs/images/annual-report-page.png" alt="年度消费报告页面" width="48%">
+  <img src="docs/images/eat-ti-page.png" alt="Eat TI 饭格页面" width="48%">
+</p>
+
+<p>
+  <img src="docs/images/annual-report-export.png" alt="年度消费报告导出卡片" width="48%">
+  <img src="docs/images/eat-ti-export.png" alt="Eat TI 饭格导出卡片" width="48%">
+</p>
+
+## 安装浏览器插件（推荐）
 
 先下载[浏览器插件安装包](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-extension.zip)，把整个压缩包解压到一个准备长期保留的文件夹。不要直接打开压缩包里的文件。解压后应能找到 `manifest.json`；如果外面还有一层文件夹，继续打开，找到包含这个文件的那一层。
 
@@ -20,11 +32,11 @@ Google Chrome 用户在地址栏输入 `chrome://extensions`，Microsoft Edge �
 
 打开报告后，顶部可以切换“年度消费报告”和“饭格彩蛋”，报告内可以调整日期并导出图片。离线网页和原始数据的导出按钮在页面最下面。已有本地应用数据的用户，可以在报告库点击“导入旧版 JSON”，选择之前导出的 `.json` 文件。
 
-### 使用本地应用
+## 使用本地应用
 
 如果更习惯双击启动文件，可以下载 [Windows 安装包](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-win-x64.zip)、[Apple 芯片安装包](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-mac-arm64.zip)或 [Intel 芯片安装包](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-mac-x64.zip)。完整解压后，Windows 双击 `启动.cmd`，苹果电脑双击 `启动.command`，再在工具页选择日期并按提示登录学校页面。安装包包含运行环境，无需另外安装 Node.js。
 
-#### 苹果脚本版首次授权
+### 苹果脚本版首次授权
 
 苹果电脑需要 macOS 13.5 或更新版本。两个苹果安装包都附有 `使用说明.txt`、`首次运行与授权.txt` 和旧版的 `安全性设置方法.png`，解压后即可阅读，也可以先[查看授权图示](https://github.com/guyong1449/DKU-Annual-Eat/blob/main/docs/macos/安全性设置方法.png)。
 
@@ -34,7 +46,7 @@ Google Chrome 用户在地址栏输入 `chrome://extensions`，Microsoft Edge �
 
 Safari 接入仍是测试功能，macOS 的系统授权、学校登录和图片导出尚未完成真机验收。
 
-### 更新和保留数据
+## 更新和保留数据
 
 插件更新前先导出原始数据备份，再将新文件放回原安装目录，在扩展管理页点击“重新加载”。保留安装目录；卸载、清除插件数据或更换浏览器后，需要重新导入备份。本地应用更新时，将旧版 `private/` 文件夹复制到新版目录即可保留记录。
 
@@ -46,13 +58,13 @@ Safari 接入仍是测试功能，macOS 的系统授权、学校登录和图片�
 
 <a name="language-english"></a>
 
-## English
-
 DKU Annual Eat turns Duke Kunshan University campus card transactions into an annual report. Choose a year, month or custom date range to explore spending, counter rankings and dining habits, or open the Eat TI dining characters. Reports can be exported as cards, long images or printable documents. Records stay on your computer and are not uploaded to a project server.
 
 [Download v1.4.0](https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.4.0).
 
-### Install the browser extension (recommended)
+[View the report previews](#report-previews).
+
+## Install the browser extension (recommended)
 
 Download the [browser extension package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-extension.zip) and extract the entire archive into a folder you plan to keep. Do not open files directly inside the archive. Find `manifest.json` in the extracted files. If there is an outer folder, open it until you reach the folder containing that file.
 
@@ -62,21 +74,21 @@ Open the browser's extensions menu, find DKU Annual Eat, and pin it or choose to
 
 At the top of a report, switch between the annual spending report and the Eat TI dining characters. Use the report controls to change dates or export images. Offline page and original data exports are at the bottom of the page. To reuse data from the local application, select Import old JSON in the report library and choose your exported `.json` file.
 
-### Use the local application
+## Use the local application
 
-If you prefer a launcher, download the [Windows package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-win-x64.zip), [Apple silicon package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-mac-arm64.zip) or [Intel package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-mac-x64.zip). Extract the whole archive, then double-click `启动.cmd` on Windows or `启动.command` on an Apple computer. Choose dates in the tool and sign in on the school page when prompted. The runtime is included; no separate Node.js installation is needed.
+If you prefer a launcher, download the [Windows package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-win-x64.zip), [Apple silicon package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-mac-arm64.zip) or [Intel package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-mac-x64.zip). Extract the whole archive, then double-click the `.cmd` launcher on Windows or the `.command` launcher on a Mac. Choose dates in the tool and sign in on the school page when prompted. The runtime is included; no separate Node.js installation is needed.
 
-#### First-launch permissions for the macOS script
+### First-launch permissions for the macOS script
 
-Apple computers require macOS 13.5 or later. Both Apple packages include `使用说明.txt`, `首次运行与授权.txt` and the original `安全性设置方法.png` illustration. Read them after extraction, or [view the permission illustration](https://github.com/guyong1449/DKU-Annual-Eat/blob/main/docs/macos/安全性设置方法.png) before downloading.
+Apple computers require macOS 13.5 or later. Both Mac packages include a quick-start guide, a first-launch permissions guide and a screenshot of the security settings. Read them after extraction, or [view the permission illustration](https://github.com/guyong1449/DKU-Annual-Eat/blob/main/docs/macos/%E5%AE%89%E5%85%A8%E6%80%A7%E8%AE%BE%E7%BD%AE%E6%96%B9%E6%B3%95.png) before downloading.
 
-Double-click `启动.command` once. If macOS blocks it or cannot verify the developer, open System Settings → Privacy & Security, find the blocked file in the Security section and click Open Anyway. Confirm the next prompt, complete any authentication requested and launch `启动.command` again. If `node` is blocked separately, repeat the approval for that file. The illustration's example app name represents one of these files. See the [Apple instructions](https://support.apple.com/102445) for the process.
+Double-click the `.command` launcher once. If macOS blocks it or cannot verify the developer, open System Settings → Privacy & Security, find the blocked file in the Security section and click Open Anyway. Confirm the next prompt, complete any authentication requested and open the launcher again. If `node` is blocked separately, repeat the approval for that file. The illustration's example app name represents one of these files. See the [Apple instructions](https://support.apple.com/102445) for the process.
 
 For Safari collection, enable web developer features in Safari → Settings → Advanced, then turn on Allow JavaScript from Apple Events in Developer settings or the Develop menu. Start collection and allow the launching application, usually Terminal, to control Safari when prompted. If you declined before, enable the application's Safari permission in System Settings → Privacy & Security → Automation, then retry. Complete school sign-in and multi-factor authentication in the new Safari window and keep its original single tab open during collection. These Safari settings are not needed for Chrome or Edge.
 
 Safari support remains experimental. System permissions, school sign-in and image exports have not yet been verified on a physical Apple computer.
 
-### Update and keep your data
+## Update and keep your data
 
 Before updating the extension, export the original data as a backup. Replace the files in the same installation folder and click Reload on the extension management page. Keep that folder; uninstalling the extension, clearing its data or switching browsers requires importing your backup again. For the local application, copy the old `private/` folder into the new version to keep your records.
 
