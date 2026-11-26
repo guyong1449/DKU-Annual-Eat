@@ -8,6 +8,7 @@ const root=path.resolve(__dirname,'..');
 const checksums={arm64:'a1a54f46a750d2523d628d924aab61758a51c9dad3e0238beb14141be9615dd3',x64:'f2879eb810e25993a0578e5d878930266fd2eafcffe9f2839b3d8db354d4879e'};
 const files=[...windowsFiles.filter(file=>file!=='启动.cmd'),'启动.command'];
 const securityGuide='安全性设置方法.png';
+const permissionGuide='首次运行与授权.txt';
 const sha=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 function findPython(){
   for(const candidate of [process.env.DKU_PYTHON,'python3','python'].filter(Boolean)){
@@ -49,11 +50,14 @@ async function build(arch){
       else fs.copyFileSync(path.join(root,file),destination);
     }
     fs.copyFileSync(path.join(root,'docs','macos',securityGuide),path.join(product,securityGuide));
+    fs.copyFileSync(path.join(root,'docs','macos',permissionGuide),path.join(product,permissionGuide));
     archiveTool(python,['extract',runtimeArchive,nodeName,product,arch]);
     fs.writeFileSync(path.join(product,'使用说明.txt'),[
       `DKU Annual Eat · macOS ${arch==='arm64'?'Apple 芯片 / Apple silicon':'Intel'} · Portable`,'',
       '需要 macOS 13.5+。使用 Chrome、Edge 或已配置权限的 Safari。',
       'Requires macOS 13.5+ with Chrome, Edge, or Safari with permissions configured.',
+      `首次运行和浏览器授权的完整步骤见同目录「${permissionGuide}」，配图见「${securityGuide}」。`,
+      `For full first-launch and browser permission steps, open ${permissionGuide}; the illustration is in ${securityGuide}.`,
       '本版 Safari 接入为测试功能，尚待真实 Mac 上的权限、学校登录和图片导出验收。',
       'Safari support is experimental; permission prompts, school sign-in and exports await verification on a physical Mac.','',
       '1. 用访达完整解压 ZIP，保留整个文件夹。',
@@ -81,15 +85,15 @@ async function build(arch){
       '   Start collection and allow the launching app (usually Terminal) to control Safari when prompted.',
       '   可在系统设置 → 隐私与安全性 → 自动化中管理此授权。',
       '   Manage this consent in System Settings → Privacy & Security → Automation.',
-      '4. 在新 Safari 窗口完成学校登录和 MFA，采集期间保留原来的单个标签页。',
-      '   Sign in and complete MFA in the new Safari window. Keep its original single tab open during collection.',
+      '4. 在新 Safari 窗口完成学校登录和多因素身份验证，采集期间保留原来的单个标签页。',
+      '   Sign in and complete multi-factor authentication in the new Safari window. Keep its original single tab open during collection.',
       '代码只控制工具创建的窗口，执行网页脚本前校验校园卡域名。',
       'The code controls tool-created windows and checks the campus domain before executing collection scripts.','',
       '首次被系统拦截时 / If macOS blocks the first launch',
       `图示见同目录「${securityGuide}」。`,
       `For the illustrated steps, open ${securityGuide} in this folder.`,
-      '确认下载来自本项目的 GitHub Releases，且 ZIP 校验值与附带的 .sha256 一致。',
-      'Check that the ZIP came from this project’s GitHub Releases and matches its .sha256 file.',
+      '确认安装包来自本项目的 GitHub 发布页：https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.4.0。',
+      'Confirm that the package came from this project’s GitHub release page: https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.4.0.',
       '1. 先双击一次「启动.command」，让系统显示拦截提示。',
       '   Try opening 启动.command once so macOS shows the blocked-file notice.',
       '2. 打开「系统设置」→「隐私与安全性」，向下滚动至「安全性」。',
@@ -110,7 +114,7 @@ async function build(arch){
     const version=require('../package.json').version;
     const manifest={version,platform:'darwin',arch,minimumOS:'13.5',nodeVersion,nodeSource:source,nodeArchiveSha256:checksums[arch],
       validation:'cross-built; native macOS launch and school login not verified',
-      files:[...files,securityGuide,'runtime/node','runtime/LICENSE','runtime/architecture','使用说明.txt'].map(file=>({file,sha256:sha(path.join(product,file))}))};
+      files:[...files,securityGuide,permissionGuide,'runtime/node','runtime/LICENSE','runtime/architecture','使用说明.txt'].map(file=>({file,sha256:sha(path.join(product,file))}))};
     fs.writeFileSync(path.join(product,'release-manifest.json'),JSON.stringify(manifest,null,2),'utf8');
     const name=`DKU-Annual-Eat-${version}-mac-${arch}.zip`;
     const temp=path.join(staging,name);archiveTool(python,['pack',product,temp]);archiveTool(python,['verify',temp]);

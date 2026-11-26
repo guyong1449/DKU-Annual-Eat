@@ -24,7 +24,15 @@ At the top of a report, switch between the annual spending report and the Eat TI
 
 If you prefer a launcher, download the [Windows package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-win-x64.zip), [Apple silicon package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-mac-arm64.zip) or [Intel package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-mac-x64.zip). Extract the whole archive, then double-click `启动.cmd` on Windows or `启动.command` on an Apple computer. Choose dates in the tool and sign in on the school page when prompted. The runtime is included; no separate Node.js installation is needed.
 
-Apple computers require macOS 13.5 or later. If the system blocks the first launch, follow the included `使用说明.txt` instructions and `安全性设置方法.png` image. Safari also requires developer features, Allow JavaScript from Apple Events, and permission for the launching application to control the browser. Safari support remains experimental. System permissions, school sign-in and image exports have not yet been verified on a physical Apple computer.
+#### First-launch permissions for the macOS script
+
+Apple computers require macOS 13.5 or later. Both Apple packages include `使用说明.txt`, `首次运行与授权.txt` and the original `安全性设置方法.png` illustration. Read them after extraction, or [view the permission illustration](https://github.com/guyong1449/DKU-Annual-Eat/blob/main/docs/macos/安全性设置方法.png) before downloading.
+
+Double-click `启动.command` once. If macOS blocks it or cannot verify the developer, open System Settings → Privacy & Security, find the blocked file in the Security section and click Open Anyway. Confirm the next prompt, complete any authentication requested and launch `启动.command` again. If `node` is blocked separately, repeat the approval for that file. The illustration's example app name represents one of these files. See the [Apple instructions](https://support.apple.com/102445) for the process.
+
+For Safari collection, enable web developer features in Safari → Settings → Advanced, then turn on Allow JavaScript from Apple Events in Developer settings or the Develop menu. Start collection and allow the launching application, usually Terminal, to control Safari when prompted. If you declined before, enable the application's Safari permission in System Settings → Privacy & Security → Automation, then retry. Complete school sign-in and multi-factor authentication in the new Safari window and keep its original single tab open during collection. These Safari settings are not needed for Chrome or Edge.
+
+Safari support remains experimental. System permissions, school sign-in and image exports have not yet been verified on a physical Apple computer.
 
 ### Update and keep your data
 

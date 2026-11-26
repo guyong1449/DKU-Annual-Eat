@@ -1,0 +1,67 @@
+DKU Annual Eat · 苹果脚本版首次运行与授权
+
+完整解压安装包，保留整个 DKU-Annual-Eat 文件夹。需要 macOS 13.5 或更新版本；Apple 芯片和 Intel 电脑分别使用对应的安装包。运行环境已包含在包内，无需另外安装 Node.js 或 Python。
+
+首次打开脚本
+
+先双击一次「启动.command」。如果 macOS 提示无法验证开发者或阻止打开，请打开「系统设置 → 隐私与安全性」，向下找到「安全性」区域，找到刚被阻止的文件，点击「仍要打开」。在随后提示中确认打开，并完成系统要求的验证，再重新双击「启动.command」。请确认文件来自本项目发布页：https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.4.0。
+
+如果随后单独提示「node」被阻止，请对这个文件重复上述允许打开的步骤，再重新运行「启动.command」。不需要更改整台电脑的安全设置。系统会记住对该文件的许可。
+
+同目录的「安全性设置方法.png」保留了之前版本的图示。图中「示例 App」只是示意名称，在本工具中通常对应「启动.command」或「node」；不同 macOS 版本的按钮位置可能略有区别。
+
+浏览器授权
+
+使用 Google Chrome 或 Microsoft Edge 时，在工具页面选择对应浏览器，点击「采集新数据」，在工具打开的学校页面完成统一身份认证和多因素身份验证即可。下面的 Safari 设置只在使用 Safari 采集时需要。
+
+使用 Safari 前，打开「Safari → 设置 → 高级」，开启「显示网页开发者功能」或名称相近的选项。随后在 Safari 的「开发者」设置或「开发」菜单中，开启「允许来自 Apple Events 的 JavaScript」。
+
+回到工具页选择 Safari，再开始采集。系统询问是否允许启动程序控制 Safari 时，点击「允许」；启动程序通常显示为「终端」。如果之前拒绝过，请到「系统设置 → 隐私与安全性 → 自动化」，找到实际发起请求的程序，为它开启 Safari 的控制权限，再重新采集。首次请求前，这个条目可能尚未出现。
+
+在工具新开的 Safari 窗口完成学校登录和多因素身份验证。采集期间保留该窗口原来的单个标签页，不要刷新或切换到其他网站。
+
+授权后使用
+
+采集完成后可以在报告页查看年度消费报告和 Eat TI 饭格。以后只查看已保存的报告，直接打开「查看报告.html」即可；需要新流水时再运行「启动.command」。更新前保留 private/ 文件夹，新版解压后复制进去即可继续使用旧记录。启动失败时可查看 private/launcher.log。
+
+本安装包尚未经过 Apple Developer ID 签名和公证。Safari 接入仍是测试功能，macOS 系统授权、学校登录和图片导出尚未完成真机验收。
+
+Apple 官方说明
+允许打开应用：https://support.apple.com/102445
+应用自动化授权：https://support.apple.com/guide/mac-help/mchl07817563/mac
+Safari 开发者设置：https://developer.apple.com/documentation/safari-developer-tools/developer-settings
+
+---
+
+DKU Annual Eat · First launch and permissions on macOS
+
+Extract the complete package and keep the DKU-Annual-Eat folder intact. Use macOS 13.5 or later and choose the package matching your Apple silicon or Intel processor. Node.js is included; no separate Node.js or Python installation is required.
+
+First launch
+
+Double-click 启动.command once. If macOS blocks the file or cannot verify the developer, open System Settings → Privacy & Security and find the blocked file in the Security section. Click Open Anyway, confirm the next prompt and complete any authentication requested. Then launch 启动.command again. Confirm that the file came from this project's release page: https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.4.0.
+
+If node is blocked separately, repeat the approval for that file and run 启动.command again. This does not require changing security settings for the whole computer. macOS remembers the exception for the approved file.
+
+The included 安全性设置方法.png is the same illustration supplied with earlier packages. Its example app name represents the blocked file; in this tool that is usually 启动.command or node. The exact screen layout can vary by macOS version.
+
+Browser permissions
+
+For Google Chrome or Microsoft Edge, choose the browser in the tool, start collection and complete school single sign-on and multi-factor authentication on the school page opened by the tool. The following Safari settings apply only when collecting through Safari.
+
+In Safari → Settings → Advanced, enable Show features for web developers or the equivalent option. Then enable Allow JavaScript from Apple Events in Safari's Developer settings or Develop menu.
+
+Select Safari in the tool and start collection. When macOS asks whether the launching application, usually Terminal, may control Safari, select Allow. If you previously declined, open System Settings → Privacy & Security → Automation, find the application that made the request, and enable its Safari permission before trying again. The entry may not appear until the first request has been made.
+
+Complete school sign-in and multi-factor authentication in the new Safari window. Keep its original single tab open during collection, without refreshing or navigating elsewhere.
+
+After setup
+
+Open 查看报告.html to read saved reports offline. Run 启动.command when you want new transactions. Keep the private/ folder when updating and copy it into the new extracted package to retain records. See private/launcher.log for launch errors.
+
+This package is unsigned and unnotarized. Safari support remains experimental; system permissions, school sign-in and image exports have not yet been verified on a physical Mac.
+
+Apple instructions
+Opening an app: https://support.apple.com/102445
+Automation permissions: https://support.apple.com/guide/mac-help/mchl07817563/mac
+Safari Developer settings: https://developer.apple.com/documentation/safari-developer-tools/developer-settings
