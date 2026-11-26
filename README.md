@@ -12,15 +12,19 @@ DKU Annual Eat 将昆山杜克大学的校园卡消费记录整理成年度报�
 
 ## 报告预览
 
-<p>
-  <img src="docs/images/annual-report-page.png" alt="年度消费报告页面" width="48%">
-  <img src="docs/images/eat-ti-page.png" alt="Eat TI 饭格页面" width="48%">
-</p>
-
-<p>
-  <img src="docs/images/annual-report-export.png" alt="年度消费报告导出卡片" width="48%">
-  <img src="docs/images/eat-ti-export.png" alt="Eat TI 饭格导出卡片" width="48%">
-</p>
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <p><img src="docs/images/annual-report-page.png" alt="年度消费报告页面" width="100%"></p>
+      <p><img src="docs/images/counter-detail-page.png" alt="窗口详情和月度消费折线图" width="100%"></p>
+      <img src="docs/images/annual-report-export.png" alt="年度消费报告导出卡片" width="100%">
+    </td>
+    <td width="50%" valign="top">
+      <p><img src="docs/images/eat-ti-page.png" alt="Eat TI 饭格页面" width="100%"></p>
+      <img src="docs/images/eat-ti-export.png" alt="Eat TI 饭格导出卡片" width="100%">
+    </td>
+  </tr>
+</table>
 
 ## 安装浏览器插件（推荐）
 

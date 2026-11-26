@@ -10,15 +10,19 @@ DKU Annual Eat turns Duke Kunshan University campus card transactions into an an
 
 ## Report previews
 
-<p>
-  <img src="docs/images/annual-report-page.png" alt="Annual spending report page" width="48%">
-  <img src="docs/images/eat-ti-page.png" alt="Eat TI dining personalities page" width="48%">
-</p>
-
-<p>
-  <img src="docs/images/annual-report-export.png" alt="Exported annual spending report card" width="48%">
-  <img src="docs/images/eat-ti-export.png" alt="Exported Eat TI character card" width="48%">
-</p>
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <p><img src="docs/images/annual-report-page.png" alt="Annual spending report page" width="100%"></p>
+      <p><img src="docs/images/counter-detail-page.png" alt="Counter details and monthly spending line chart" width="100%"></p>
+      <img src="docs/images/annual-report-export.png" alt="Exported annual spending report card" width="100%">
+    </td>
+    <td width="50%" valign="top">
+      <p><img src="docs/images/eat-ti-page.png" alt="Eat TI dining personalities page" width="100%"></p>
+      <img src="docs/images/eat-ti-export.png" alt="Exported Eat TI character card" width="100%">
+    </td>
+  </tr>
+</table>
 
 ## Install the browser extension (recommended)
 
