@@ -114,7 +114,7 @@ async function build(arch){
     fs.writeFileSync(path.join(product,'release-manifest.json'),JSON.stringify(manifest,null,2),'utf8');
     const name=`DKU-Annual-Eat-${version}-mac-${arch}.zip`;
     const temp=path.join(staging,name);archiveTool(python,['pack',product,temp]);archiveTool(python,['verify',temp]);
-    const release=path.join(root,'release');fs.mkdirSync(release,{recursive:true});
+    const release=path.join(root,'release','v'+version);fs.mkdirSync(release,{recursive:true});
     const output=path.join(release,name);fs.copyFileSync(temp,output);
     fs.writeFileSync(output+'.sha256',`${sha(output)}  ${name}\n`,'utf8');
     console.log(`Built ${output} (${(fs.statSync(output).size/1024/1024).toFixed(1)} MiB)`);

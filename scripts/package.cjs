@@ -60,7 +60,7 @@ async function build(arch=process.arch){
     const manifest={version,platform:'win32',arch,nodeVersion,nodeSource:source,nodeArchiveSha256:checksums[arch],
       files:[...files,'runtime/node.exe','runtime/LICENSE','使用说明.txt'].map(file=>({file,sha256:sha(path.join(product,file))}))};
     fs.writeFileSync(path.join(product,'release-manifest.json'),JSON.stringify(manifest,null,2),'utf8');
-    const release=path.join(root,'release');fs.mkdirSync(release,{recursive:true});
+    const release=path.join(root,'release','v'+version);fs.mkdirSync(release,{recursive:true});
     const name=`DKU-Annual-Eat-${version}-win-${arch}.zip`;
     const temp=path.join(staging,name),output=path.join(release,name);
     powershell("$ErrorActionPreference='Stop'; Compress-Archive -LiteralPath $env:DKU_PRODUCT -DestinationPath $env:DKU_OUTPUT -CompressionLevel Optimal",{DKU_PRODUCT:product,DKU_OUTPUT:temp});

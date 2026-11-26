@@ -6,57 +6,37 @@
 
 ## 简体中文
 
-**把这一年的饭，吃成一份报告。**
+DKU Annual Eat 把昆山杜克大学的校园卡消费记录整理成一份报告。你可以看看每个月花了多少钱、常去哪些窗口，也可以通过 Eat TI · 饭格看看自己的用餐习惯更像哪些角色。报告支持中英文切换，可以按年份、月份或自选日期查看，并导出图片、离线网页或打印文档。
 
-DKU Annual Eat 将校园卡消费记录整理成一份有趣的消费报告，还能通过 Eat TI · 饭格发现你的专属干饭角色。
+[当前测试版是 v1.3.0-beta.1](https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.3.0-beta.1)，提供浏览器插件和本地应用，两种方式使用相同的消费统计和饭格规则。第一次使用时，建议先试浏览器插件；如果你习惯双击一个启动文件，也可以下载本地应用。
 
-### 主要内容
+### 使用浏览器插件
 
-- **消费报告**包含月度消费走势、常去窗口、用餐时段、金额分布及趣味记录，支持自定义日期和中英文切换。
-- **Eat TI · 饭格**从 25 种干饭角色中匹配最多 6 种，并配有独立角色插画。
-- **采集与分享**支持中文和英文校园卡页面，报告可导出为卡片、长图、HTML 网页，也可打印为 PDF 文件。
+下载[浏览器插件安装包](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.3.0-beta.1/DKU-Annual-Eat-1.3.0-beta.1-extension.zip)，完整解压到一个准备长期保留的文件夹。Google Chrome 用户打开 `chrome://extensions`，Microsoft Edge 用户打开 `edge://extensions`，开启“开发者模式”，再点击“加载已解压的扩展程序”，选择包含 `manifest.json` 的文件夹。这个版本通过手动加载安装，目前没有上架扩展商店。
 
-### 安装与使用
+安装完成后，点击工具栏里的 DKU Annual Eat 图标，选择日期范围，再点击“采集新数据”。工具会打开或复用校园卡标签页。你在学校页面完成统一身份认证和多因素身份验证后，插件会继续读取记录。采集期间请保留校园卡标签页，不要刷新；工具页可以关闭，之后再点击插件图标就能查看结果。
 
-#### 1. 下载对应的安装包
+报告保存在当前浏览器中。你可以在报告里导出卡片、长图或离线网页，也可以在浏览器的打印窗口中保存为 `.pdf` 文件。旧应用的 `.json` 原始数据文件可以通过“导入旧版 JSON”继续使用，不需要重新采集。详细步骤见[插件使用说明](https://github.com/guyong1449/DKU-Annual-Eat/blob/main/docs/extension.md)。
 
-在 [v1.2.0-beta.1 发布页面](https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.2.0-beta.1) 的 Assets 中，选择适合自己电脑的 ZIP 压缩包。
+### 使用本地应用
 
-| 电脑类型 | 下载文件 |
-| --- | --- |
-| 64 位 Windows 电脑 | `DKU-Annual-Eat-1.2.0-beta.1-win-x64.zip` |
-| 配备 Apple 芯片的 Mac | `DKU-Annual-Eat-1.2.0-beta.1-mac-arm64.zip` |
-| 配备 Intel 处理器的 Mac | `DKU-Annual-Eat-1.2.0-beta.1-mac-x64.zip` |
+Windows 电脑下载 [Windows 安装包](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.3.0-beta.1/DKU-Annual-Eat-1.3.0-beta.1-win-x64.zip)。苹果电脑根据处理器选择 [Apple 芯片安装包](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.3.0-beta.1/DKU-Annual-Eat-1.3.0-beta.1-mac-arm64.zip)或 [Intel 芯片安装包](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.3.0-beta.1/DKU-Annual-Eat-1.3.0-beta.1-mac-x64.zip)。完整解压后，Windows 双击 `启动.cmd`，苹果电脑双击 `启动.command`。安装包已经包含运行环境，无需另外安装 Node.js。
 
-#### 2. 完整解压并启动
+在工具页面选择日期范围并开始采集，再到工具打开的学校页面完成登录。Windows 使用 Google Chrome 或 Microsoft Edge。苹果电脑需要 macOS 13.5 或更新版本，也可以选择 Safari。Safari 需要开启开发者功能和“允许来自 Apple Events 的 JavaScript”，并允许启动程序控制浏览器。Safari 接入仍是测试功能，苹果电脑上的系统授权、学校登录和图片导出还没有完成真机验收。
 
-将 ZIP 完整解压到一个文件夹，保留其中的全部文件。Windows 双击 `启动.cmd`，Mac 双击 `启动.command`。
+如果 macOS 首次启动时拦截了文件，可以按照包内的 `使用说明.txt` 和 `安全性设置方法.png` 操作，在“系统设置 → 隐私与安全性”中允许打开对应文件，也可以参考 [Apple 官方说明](https://support.apple.com/zh-cn/102445)。采集结束后，以后可以直接打开 `查看报告.html` 阅读已保存的报告，需要更新流水时再运行启动文件。
 
-安装包已包含 Node.js 运行环境，无需另行安装 Node.js 或执行 `npm install`，Windows 使用 Google Chrome 或 Microsoft Edge，Mac 也可在工具页选择 Safari。只有 Safari 时会自动选中它。Mac 需要 macOS 13.5 或更新版本。
+### 怎样理解和保留报告
 
-如果 Mac 首次启动时出现系统安全提示，先尝试打开 `启动.command`，随后进入“系统设置 → 隐私与安全性”，找到对应文件并点击“仍要打开”。如果 `runtime/node` 也出现相同提示，按同样的方法操作后重新启动。Mac 包内附有 `使用说明.txt` 和 `安全性设置方法.png`。[Apple 官方说明](https://support.apple.com/zh-cn/102445)
+消费报告按校园卡名称中明确的收款窗口编号归集金额，例如 `1F-2`。同一窗口可能换过经营内容，所以这个金额表示在该收款窗口的消费，不能直接解释成某种菜品的花费。学校返回的名称仍保留在窗口详情和逐笔记录中，Eat TI 继续使用原始记录和原有规则。更具体的说明见[校园卡数据口径](https://github.com/guyong1449/DKU-Annual-Eat/blob/main/docs/campus-card-data.md)。
 
-#### 3. 登录并采集校园卡记录
+这一版把月度图表的月份和年份分成了两行，并重新安排了打印报告的分页。已经另存的旧网页和打印文档不会自动改变，重新打开报告并再次导出，就会使用新版样式。
 
-在自动打开的工具页面中选择统计年份或自定义日期范围，点击“采集新数据”。
+浏览器插件更新前，先导出原始数据文件作为备份，再把新文件放回原安装目录，在扩展管理页点击“重新加载”。请保留这个目录。卸载插件、清除插件数据或改用另一个浏览器后，原来的报告不会自动跟过去，可以用备份文件重新导入。
 
-随后在专用浏览器窗口中完成学校统一身份认证（SSO）和多因素身份验证（MFA）。登录完成后，工具会自动采集所选范围内的消费记录。
+本地应用更新前，先退出旧工具并备份 `private/` 文件夹，把新版解压到新的文件夹，再将旧版的 `private/` 复制进去。消费记录和报告都保存在本机，不会上传到项目服务器。独立导出的网页和数据文件也可以留作备份。
 
-使用 Safari 时，先在 Safari 设置 → 高级中显示开发者功能，再到开发者设置开启“允许来自 Apple Events 的 JavaScript”。首次采集时，允许系统提示中的启动程序控制 Safari，通常显示为“终端”。授权可在系统设置 → 隐私与安全性 → 自动化中管理。
-
-在工具新开的 Safari 窗口完成学校登录和 MFA，采集期间保留原来的单个标签页。Safari 接入目前为测试功能，真机上的权限弹窗、学校登录和图片导出尚待验收。
-
-#### 4. 查看、导出和再次打开报告
-
-采集结束后打开报告，即可查看消费统计和 Eat TI 角色，并按需切换中英文、调整日期范围或导出图片及 HTML 网页。
-
-以后可直接打开 `查看报告.html` 离线查看已保存的报告，需要获取新记录时，再运行启动文件。
-
-**更新版本时**，先在旧版本中点击“退出工具”并备份 `private/` 文件夹。将新版压缩包解压到新文件夹，把旧版的 `private/` 复制到新版目录中，再启动新版。
-
-项目构思参考 SJTU Annual Eat，视觉配色参考 DKU Beamer 和 DKU Note。项目代码采用 MIT 许可证。
-
-[SJTU Annual Eat](https://github.com/Milvoid/SJTU-Annual-Eat) · [DKU Beamer](https://github.com/EricZQu/DKU-beamer-presentation) · [DKU Note](https://github.com/EricZQu/DKU-Note-Template) · [MIT License](LICENSE)
+项目构思参考 [SJTU Annual Eat](https://github.com/Milvoid/SJTU-Annual-Eat)，配色参考 [DKU Beamer](https://github.com/EricZQu/DKU-beamer-presentation) 和 [DKU Note](https://github.com/EricZQu/DKU-Note-Template)。代码采用 [MIT 许可证](LICENSE)。
 
 ---
 
@@ -64,54 +44,34 @@ DKU Annual Eat 将校园卡消费记录整理成一份有趣的消费报告，�
 
 ## English
 
-**A whole year of meals, one story worth sharing.**
+DKU Annual Eat turns Duke Kunshan University campus card transactions into a spending report. You can see how your spending changes by month, which counters you visit most, and which Eat TI dining characters fit your habits. Reports work in Chinese and English, let you choose a year, month or custom date range, and can be exported as images, standalone web pages or printable documents.
 
-DKU Annual Eat turns campus card transactions into a playful spending report. Eat TI adds dining characters matched to your habits.
+[The current preview release is v1.3.0-beta.1](https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.3.0-beta.1). It includes a browser extension and a local application, both using the same spending calculations and Eat TI rules. The browser extension is a good place to start. If you prefer launching a program by double-clicking a file, use the local application.
 
-### Highlights
+### Use the browser extension
 
-- **Spending report** includes monthly trends, favorite dining counters, meal times, spending breakdowns, and fun facts, with custom date ranges and Chinese-English switching.
-- **Eat TI characters** offer up to six matches from 25 dining characters, each with its own illustration.
-- **Collection and sharing** supports Chinese and English campus card pages. Export reports as cards, long images, or HTML pages, or print them as PDF files.
+Download the [browser extension package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.3.0-beta.1/DKU-Annual-Eat-1.3.0-beta.1-extension.zip) and extract it into a folder you plan to keep. In Google Chrome, open `chrome://extensions`; in Microsoft Edge, open `edge://extensions`. Enable Developer mode, select Load unpacked, and choose the folder containing `manifest.json`. This version is installed manually and is not listed in an extension store.
 
-### Setup and usage
+Click DKU Annual Eat in the browser toolbar, choose a date range, and select Collect new data. The extension opens or reuses a campus card tab. Complete the school single sign-on and multi-factor authentication there, and collection will continue. Keep that tab open without refreshing it. You can close the tool page and click the extension icon later to check the result.
 
-#### 1. Download the package for your computer
+Reports stay in the current browser. Open a report to export a card, a long image or a standalone web page, or save a `.pdf` file from the browser print dialog. The Import old JSON button accepts original `.json` data files from the local application, so you can keep using records you have already collected. See the [extension guide](https://github.com/guyong1449/DKU-Annual-Eat/blob/main/docs/extension.md) for the full instructions.
 
-Choose the ZIP archive for your computer under Assets on the [v1.2.0-beta.1 release page](https://github.com/guyong1449/DKU-Annual-Eat/releases/tag/v1.2.0-beta.1).
+### Use the local application
 
-| Platform | Download |
-| --- | --- |
-| 64-bit Windows computer | `DKU-Annual-Eat-1.2.0-beta.1-win-x64.zip` |
-| Mac with Apple silicon | `DKU-Annual-Eat-1.2.0-beta.1-mac-arm64.zip` |
-| Mac with an Intel processor | `DKU-Annual-Eat-1.2.0-beta.1-mac-x64.zip` |
+For Windows, download the [Windows package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.3.0-beta.1/DKU-Annual-Eat-1.3.0-beta.1-win-x64.zip). For an Apple computer, choose the [Apple silicon package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.3.0-beta.1/DKU-Annual-Eat-1.3.0-beta.1-mac-arm64.zip) or the [Intel package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.3.0-beta.1/DKU-Annual-Eat-1.3.0-beta.1-mac-x64.zip). Extract the entire archive, then double-click `启动.cmd` on Windows or `启动.command` on an Apple computer. The runtime is included, so you do not need to install Node.js separately.
 
-#### 2. Extract and launch
+Choose a date range in the tool page and start collection, then sign in on the school page opened by the tool. Windows uses Google Chrome or Microsoft Edge. Apple computers require macOS 13.5 or later and can also use Safari. Safari requires its developer features and Allow JavaScript from Apple Events setting, along with permission for the launching application to control the browser. Safari support remains experimental. System permission prompts, school sign-in and image exports have not yet been verified on a physical Apple computer.
 
-Extract the entire ZIP archive into a folder, keeping all its files together. On Windows, double-click `启动.cmd`. On Mac, double-click `启动.command`.
+If macOS blocks a file on first launch, follow the included `使用说明.txt` instructions and `安全性设置方法.png` image to allow that file in System Settings → Privacy & Security. The [Apple instructions](https://support.apple.com/102445) explain this process. Once a report has been saved, open `查看报告.html` to read it offline. Run the launcher when you want new transactions.
 
-The package includes the Node.js runtime, so you do not need to install Node.js or run `npm install`. Windows uses Google Chrome or Microsoft Edge. On Mac, you can also select Safari in the tool page. Safari is selected automatically when Chrome and Edge are unavailable. Mac requires macOS 13.5 or later.
+### Read, keep and update your reports
 
-If macOS displays a security warning on first launch, try opening `启动.command`, then go to System Settings → Privacy & Security, find the blocked file, and select Open Anyway. If the same warning appears for `runtime/node`, follow the same steps and launch the tool again. Mac packages include `使用说明.txt` instructions and the `安全性设置方法.png` illustrated guide. [Official Apple instructions](https://support.apple.com/102445)
+Financial reports group explicit collection-counter codes found in campus card names, such as `1F-2`. A counter may change its operator or menu over time, so its total describes spending at that collection point rather than on a particular dish. Names returned by the school remain in counter details and transaction records. Eat TI keeps its original inputs and rules. See the [campus card data notes](https://github.com/guyong1449/DKU-Annual-Eat/blob/main/docs/campus-card-data.md) for the evidence and limits behind this interpretation.
 
-#### 3. Sign in and collect campus card records
+This release separates month labels from year labels on monthly charts and reorganizes the printed report. Previously exported pages and documents do not change automatically. Reopen the report and export it again to use the new layout.
 
-In the tool page that opens, choose a year or custom date range and select Collect new data.
+Before updating the extension, export your original data as a backup. Replace the files in the same installation folder and click Reload on the browser extension management page. Keep that folder in place. Reports do not automatically follow you if you uninstall the extension, clear its data or switch browsers, but you can import your backup again.
 
-Complete the school's single sign-on (SSO) and multi-factor authentication (MFA) in the dedicated browser window. Once you have signed in, the tool automatically collects transactions from the selected period.
+To update the local application, exit the old tool and back up its `private/` folder. Extract the new version into a separate folder, then copy `private/` into it. Transactions and reports stay on your computer and are not uploaded to a project server. Exported web pages and original data files can also be kept as backups.
 
-For Safari, first show features for web developers in Safari Settings → Advanced, then enable Allow JavaScript from Apple Events in Developer settings. On first collection, allow the launching app shown in the macOS prompt to control Safari, usually Terminal. Manage this consent in System Settings → Privacy & Security → Automation.
-
-Complete school sign-in and MFA in the Safari window opened by the tool, keeping its original single tab open during collection. Safari support is experimental. Permission prompts, school sign-in, and image exports still need verification on a physical Mac.
-
-#### 4. View, export, and reopen your report
-
-After collection, open the report to explore your spending statistics and Eat TI characters. You can switch between Chinese and English, adjust date filters, or export images and HTML pages.
-
-To view a saved report later, open `查看报告.html` directly, even while offline. Run the launcher again when you want to collect new records.
-
-**When updating**, click Exit tool in the old version and back up the `private/` folder. Extract the new ZIP into a separate folder, copy your old `private/` into it, and launch the new version.
-
-The project concept draws on SJTU Annual Eat, with colors inspired by DKU Beamer and DKU Note. The code is MIT-licensed.
-
-[SJTU Annual Eat](https://github.com/Milvoid/SJTU-Annual-Eat) · [DKU Beamer](https://github.com/EricZQu/DKU-beamer-presentation) · [DKU Note](https://github.com/EricZQu/DKU-Note-Template) · [MIT License](LICENSE)
+The project idea draws on [SJTU Annual Eat](https://github.com/Milvoid/SJTU-Annual-Eat), with colors inspired by [DKU Beamer](https://github.com/EricZQu/DKU-beamer-presentation) and [DKU Note](https://github.com/EricZQu/DKU-Note-Template). The code is released under the [MIT License](LICENSE).
