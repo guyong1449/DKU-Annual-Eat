@@ -48,8 +48,6 @@ Google Chrome 用户在地址栏输入 `chrome://extensions`，Microsoft Edge �
 
 使用 Safari 采集时，先到“Safari → 设置 → 高级”开启网页开发者功能，再在“开发者”设置或“开发”菜单中开启“允许来自 Apple Events 的 JavaScript”。开始采集后，允许系统提示中的启动程序控制 Safari，通常显示为“终端”。此前拒绝过授权的，可以在“系统设置 → 隐私与安全性 → 自动化”中为对应程序开启 Safari 权限，再重试。在工具新开的 Safari 窗口完成学校登录和多因素身份验证，采集期间保留原来的单个标签页。Chrome 和 Edge 不需要这组 Safari 设置。
 
-Safari 接入仍是测试功能，macOS 的系统授权、学校登录和图片导出尚未完成真机验收。
-
 ## 更新和保留数据
 
 插件更新前先导出原始数据备份，再将新文件放回原安装目录，在扩展管理页点击“重新加载”。保留安装目录；卸载、清除插件数据或更换浏览器后，需要重新导入备份。本地应用更新时，将旧版 `private/` 文件夹复制到新版目录即可保留记录。
@@ -89,8 +87,6 @@ Apple computers require macOS 13.5 or later. Both Mac packages include a quick-s
 Double-click the `.command` launcher once. If macOS blocks it or cannot verify the developer, open System Settings → Privacy & Security, find the blocked file in the Security section and click Open Anyway. Confirm the next prompt, complete any authentication requested and open the launcher again. If `node` is blocked separately, repeat the approval for that file. The illustration's example app name represents one of these files. See the [Apple instructions](https://support.apple.com/102445) for the process.
 
 For Safari collection, enable web developer features in Safari → Settings → Advanced, then turn on Allow JavaScript from Apple Events in Developer settings or the Develop menu. Start collection and allow the launching application, usually Terminal, to control Safari when prompted. If you declined before, enable the application's Safari permission in System Settings → Privacy & Security → Automation, then retry. Complete school sign-in and multi-factor authentication in the new Safari window and keep its original single tab open during collection. These Safari settings are not needed for Chrome or Edge.
-
-Safari support remains experimental. System permissions, school sign-in and image exports have not yet been verified on a physical Apple computer.
 
 ## Update and keep your data
 

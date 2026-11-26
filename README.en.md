@@ -46,8 +46,6 @@ Double-click the `.command` launcher once. If macOS blocks it or cannot verify t
 
 For Safari collection, enable web developer features in Safari → Settings → Advanced, then turn on Allow JavaScript from Apple Events in Developer settings or the Develop menu. Start collection and allow the launching application, usually Terminal, to control Safari when prompted. If you declined before, enable the application's Safari permission in System Settings → Privacy & Security → Automation, then retry. Complete school sign-in and multi-factor authentication in the new Safari window and keep its original single tab open during collection. These Safari settings are not needed for Chrome or Edge.
 
-Safari support remains experimental. System permissions, school sign-in and image exports have not yet been verified on a physical Apple computer.
-
 ## Update and keep your data
 
 Before updating the extension, export the original data as a backup. Replace the files in the same installation folder and click Reload on the extension management page. Keep that folder; uninstalling the extension, clearing its data or switching browsers requires importing your backup again. For the local application, copy the old `private/` folder into the new version to keep your records.
