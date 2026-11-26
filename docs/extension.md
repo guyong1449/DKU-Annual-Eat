@@ -6,15 +6,18 @@
 
 ## 简体中文
 
-下载[浏览器插件安装包](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.3.0-beta.1/DKU-Annual-Eat-1.3.0-beta.1-extension.zip)，完整解压到一个准备长期保留的文件夹。Google Chrome 用户打开 `chrome://extensions`，Microsoft Edge 用户打开 `edge://extensions`，开启“开发者模式”，再点击“加载已解压的扩展程序”，选择包含 `manifest.json` 的文件夹。这个版本通过手动加载安装，目前没有上架扩展商店。
+先下载[浏览器插件安装包](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-extension.zip)，把整个压缩包解压到一个准备长期保留的文件夹。不要直接打开压缩包里的文件。解压后应能找到 `manifest.json`；如果外面还有一层文件夹，继续打开，找到包含这个文件的那一层。
 
-安装完成后，点击工具栏里的 DKU Annual Eat 图标，选择日期范围，再点击“采集新数据”。工具会打开或复用校园卡标签页。你在学校页面完成统一身份认证和多因素身份验证后，插件会继续读取记录。采集期间请保留校园卡标签页，不要刷新；工具页可以关闭，之后再点击插件图标就能查看结果。
+Google Chrome 用户在地址栏输入 `chrome://extensions`，Microsoft Edge 用户输入 `edge://extensions`。打开页面上的“开发者模式”，点击“加载已解压的扩展程序”，选择刚才包含 `manifest.json` 的文件夹。选择的是解压后的目录，不是压缩包。这个版本需要手动加载，没有上架扩展商店。
 
-报告保存在当前浏览器中。你可以在报告里导出卡片、长图或离线网页，也可以在浏览器的打印窗口中保存为 `.pdf` 文件。旧应用的 `.json` 原始数据文件可以通过“导入旧版 JSON”继续使用，不需要重新采集。
+安装完成后，点击浏览器右上角的扩展程序按钮，找到 DKU Annual Eat，将它固定或设为在工具栏显示。再点击它的图标打开工具页，选择日期范围，点击“采集新数据”。在随后打开的学校页面完成统一身份认证和多因素身份验证，插件就会继续读取记录。采集期间保留校园卡标签页，不要刷新；工具页可以关闭，之后再次点击插件图标即可查看结果。
 
-插件只在校园卡域名内读取记录，学校登录仍由学校页面完成，消费记录不会上传到项目服务器。窗口金额按明确的收款窗口编号归集，学校返回名称保留在明细中；Eat TI 的原始规则不变。
+打开报告后，顶部可以切换“年度消费报告”和“饭格彩蛋”，报告内可以调整日期并导出图片。离线网页和原始数据的导出按钮在页面最下面。已有本地应用数据的用户，可以在报告库点击“导入旧版 JSON”，选择之前导出的 `.json` 文件。
 
-浏览器插件更新前，先导出原始数据文件作为备份，再把新文件放回原安装目录，在扩展管理页点击“重新加载”。请保留这个目录。卸载插件、清除插件数据或改用另一个浏览器后，原来的报告不会自动跟过去，可以用备份文件重新导入。
+
+### 更新和保留数据
+
+插件更新前先导出原始数据备份，再将新文件放回原安装目录，在扩展管理页点击“重新加载”。保留安装目录；卸载、清除插件数据或更换浏览器后，需要重新导入备份。
 
 ---
 
@@ -22,12 +25,15 @@
 
 ## English
 
-Download the [browser extension package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.3.0-beta.1/DKU-Annual-Eat-1.3.0-beta.1-extension.zip) and extract it into a folder you plan to keep. In Google Chrome, open `chrome://extensions`; in Microsoft Edge, open `edge://extensions`. Enable Developer mode, select Load unpacked, and choose the folder containing `manifest.json`. This version is installed manually and is not listed in an extension store.
+Download the [browser extension package](https://github.com/guyong1449/DKU-Annual-Eat/releases/download/v1.4.0/DKU-Annual-Eat-1.4.0-extension.zip) and extract the entire archive into a folder you plan to keep. Do not open files directly inside the archive. Find `manifest.json` in the extracted files. If there is an outer folder, open it until you reach the folder containing that file.
 
-Click DKU Annual Eat in the browser toolbar, choose a date range, and select Collect new data. The extension opens or reuses a campus card tab. Complete the school single sign-on and multi-factor authentication there, and collection will continue. Keep that tab open without refreshing it. You can close the tool page and click the extension icon later to check the result.
+In Google Chrome, enter `chrome://extensions` in the address bar. In Microsoft Edge, enter `edge://extensions`. Enable Developer mode, select Load unpacked, and choose the folder containing `manifest.json`. Select the extracted folder, not the archive. This release is installed manually and is not listed in an extension store.
 
-Reports stay in the current browser. Open a report to export a card, a long image or a standalone web page, or save a `.pdf` file from the browser print dialog. The Import old JSON button accepts original `.json` data files from the local application, so you can keep using records you have already collected.
+Open the browser's extensions menu, find DKU Annual Eat, and pin it or choose to show it in the toolbar. Click its icon to open the tool, select a date range, and click Collect new data. Complete the school single sign-on and multi-factor authentication in the school page that opens. The extension will then continue collecting records. Keep the campus card tab open without refreshing it. You can close the tool page and click the extension icon later to view the result.
 
-The extension reads records only within the campus card domain. School sign-in stays on school pages, and transactions are not uploaded to a project server. Financial reports group explicit counter codes while keeping source names in the details. Eat TI keeps its original rules.
+At the top of a report, switch between the annual spending report and the Eat TI dining characters. Use the report controls to change dates or export images. Offline page and original data exports are at the bottom of the page. To reuse data from the local application, select Import old JSON in the report library and choose your exported `.json` file.
 
-Before updating the extension, export your original data as a backup. Replace the files in the same installation folder and click Reload on the browser extension management page. Keep that folder in place. Reports do not automatically follow you if you uninstall the extension, clear its data or switch browsers, but you can import your backup again.
+
+### Update and keep your data
+
+Before updating the extension, export the original data as a backup. Replace the files in the same installation folder and click Reload on the extension management page. Keep that folder; uninstalling the extension, clearing its data or switching browsers requires importing your backup again.

@@ -6,7 +6,7 @@ const read=file=>fs.readFileSync(path.join(root,'src',file),'utf8');
 const {createLanguage}=require('../src/language.js');
 const {createImageExporter,saveShareImage}=require('../src/share.js');
 const app=`const createLanguage=${createLanguage.toString()};\nconst createImageExporter=${createImageExporter.toString()};\nconst saveShareImage=${saveShareImage.toString()};\n${read('app.js')}`;new vm.Script(app);
-const html=read('index.html').replace('/* STYLES */',()=>read('theme.css')).replace('/* APP */',()=>app.replace(/<\/script/gi,'<\\/script'));
+const html=read('index.html').replace('<!-- FAVICON -->',()=>`<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,${encodeURIComponent(read('assets/favicon.svg'))}">`).replace('/* STYLES */',()=>read('theme.css')).replace('/* APP */',()=>app.replace(/<\/script/gi,'<\\/script'));
 fs.mkdirSync(path.join(root,'dist'),{recursive:true});
 fs.writeFileSync(path.join(root,'dist/index.html'),html,'utf8');
 console.log('Built dist/index.html. Launch with 启动.cmd or npm start.');

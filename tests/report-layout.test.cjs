@@ -38,8 +38,37 @@ test('cross-year chart axes place month numbers above separate year groups in bo
     for(const year of ['2024','2025','2026'])assert.match(axis[2],new RegExp('>'+year+'<'));
     assert.equal((axis[2].match(/<line /g)||[]).length,3);
   }
-  assert.match(element('merchant-detail').innerHTML,/校园卡返回名称/);
+  assert.match(element('merchant-detail').innerHTML,/收款窗口/);
   assert.match(element('included').innerHTML,/面档 1F-2/);
+});
+
+test('visible counter names retain every source name while totals still group by counter code',()=>{
+  const input=data([row('a','蛋包饭 1F-2',-2000,'2025-01-10 12:00'),row('b','面档 <Noodles> 1F-2',-1500,'2025-03-01 12:00')]);
+  const {element,window}=renderReport(core.reportHTML(input));
+  element('year-filter').value='2025';element('year-filter').onchange();
+  for(const id of ['merchant-tags','merchant-select','merchant-detail','ranking','distribution','report-print']){
+    const markup=element(id).innerHTML;
+    assert.match(markup,/蛋包饭 1F-2/,id);assert.match(markup,/面档 &lt;Noodles&gt; 1F-2/,id);
+    assert.doesNotMatch(markup,/<Noodles>/,id);
+  }
+  assert.equal(element('windows').textContent,1);
+  assert.match(window.dkuReport.share('long').svg,/蛋包饭/);
+  element('month-filter').value='01';element('month-filter').onchange();
+  assert.match(element('merchant-tags').innerHTML,/蛋包饭 1F-2/);
+  assert.doesNotMatch(element('merchant-tags').innerHTML,/Noodles/);
+});
+
+test('line chart valley values sit below their point and all value labels mask crossing lines',()=>{
+  const {element}=renderReport(core.reportHTML(data([
+    row('a','面档 1F-2',-29520,'2025-01-10 12:00'),row('b','面档 1F-2',-16740,'2025-02-10 12:00'),row('c','面档 1F-2',-60000,'2025-03-10 12:00')
+  ])));
+  element('year-filter').value='2025';element('year-filter').onchange();
+  const markup=element('merchant-detail').innerHTML;
+  const points=[...markup.matchAll(/<circle cx="([^"]+)" cy="([^"]+)"/g)];
+  const labels=[...markup.matchAll(/<text class="chart-value" x="([^"]+)" y="([^"]+)"([^>]*)>([^<]+)<\/text>/g)];
+  const valley=labels.find(m=>m[4]==='167.4'),point=points.find(m=>m[1]===valley[1]);
+  assert(Number(valley[2])>Number(point[2])+15);
+  for(const label of labels){assert.match(label[3],/stroke="white"/);assert.match(label[3],/paint-order="stroke fill"/);}
 });
 
 test('long time ranges receive yearly print panels instead of shrinking all month labels into one row',()=>{

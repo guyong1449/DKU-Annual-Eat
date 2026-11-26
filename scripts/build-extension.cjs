@@ -12,6 +12,8 @@ const {createImageExporter,saveShareImage}=require('../src/share.js');
 function build(){
   fs.mkdirSync(output,{recursive:true});
   for(const file of ['manifest.json','storage.js','background.js','content.js','app.html','app.js','extension.css'])fs.copyFileSync(path.join(root,'extension',file),path.join(output,file));
+  fs.mkdirSync(path.join(output,'icons'),{recursive:true});
+  for(const size of [16,32,48,128])fs.copyFileSync(path.join(root,'extension','icons',`icon${size}.png`),path.join(output,'icons',`icon${size}.png`));
   for(const file of ['core.js','collector.js','theme.css'])fs.copyFileSync(path.join(root,'src',file),path.join(output,file));
   fs.writeFileSync(path.join(output,'language.js'),createLanguage.toString()+'\n','utf8');
   const runtime=[groupCounters,reportModel,filterPeriod,createReportRange,reportApp,createLanguage,createEatTI,personalityApp,createImageExporter,saveShareImage].map(fn=>fn.toString()).join('\n');
@@ -33,7 +35,7 @@ function build(){
     const version=require('../package.json').version;
     const release=path.join(root,'release','v'+version);fs.mkdirSync(release,{recursive:true});
     const archive=path.join(release,`DKU-Annual-Eat-${version}-extension.zip`);
-    const files=['manifest.json','storage.js','background.js','content.js','app.html','app.js','extension.css','core.js','collector.js','theme.css','language.js','report-runtime.js','report-entry.js','offline-template.html','report.html','LICENSE','README.md'];
+    const files=['manifest.json','storage.js','background.js','content.js','app.html','app.js','extension.css','core.js','collector.js','theme.css','language.js','report-runtime.js','report-entry.js','offline-template.html','report.html','LICENSE','README.md',...[16,32,48,128].map(size=>`icons/icon${size}.png`)];
     const result=spawnSync('python',['-c','import json,pathlib,sys,zipfile; source=pathlib.Path(sys.argv[1]); archive=zipfile.ZipFile(sys.argv[2],"w",zipfile.ZIP_DEFLATED); [archive.write(source/name,name) for name in json.loads(sys.argv[3])]; archive.close()',output,archive,JSON.stringify(files)],{encoding:'utf8',windowsHide:true});
     if(result.error||result.status!==0)throw new Error(result.error?.message||result.stderr||'ZIP build failed');
     console.log('Packaged '+archive);

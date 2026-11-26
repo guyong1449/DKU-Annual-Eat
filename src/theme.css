@@ -18,6 +18,11 @@
 .counter-scope{max-width:880px;font-size:12px;line-height:1.65;color:var(--muted)}
 .counter-aliases{font-size:12px;line-height:1.55;color:var(--muted);overflow-wrap:anywhere;margin:8px 0 14px}
 .print-year-charts{display:none}
+@media screen{
+  .page{padding-top:28px;padding-bottom:36px}.page-heading{gap:16px;margin-bottom:20px}.card{padding:22px}.section-head{margin-bottom:16px}.chart-grid{gap:18px;margin-bottom:18px;align-items:start}.chart-panel .donut-layout{gap:14px}.legend{gap:9px}.chart-values{margin-top:6px}.chart-values summary{min-height:34px}.explorer{margin-bottom:18px}.explorer-head{margin-bottom:14px}.merchant-tags{margin-bottom:18px}.explorer-body{grid-template-columns:minmax(210px,250px) minmax(0,1fr);gap:22px;padding-top:18px;align-items:start}.merchant-metric{padding-right:20px}.merchant-metric h3{margin:6px 0 14px}.merchant-metric p{margin-top:8px}.mini-facts{margin-top:18px;gap:12px}.rank{padding:11px 0}.records{margin-top:18px}.monthly-chart>.chart-scroll{overflow-x:auto}.report-navigation button{min-height:50px;padding:12px 22px;font-size:16px;font-weight:700}
+}
+@media screen and (max-width:900px){.explorer-body{grid-template-columns:200px minmax(0,1fr)}}
+@media screen and (max-width:600px){.monthly-series{min-width:var(--chart-width)!important}.card{padding:20px 18px}.explorer-body{grid-template-columns:1fr;gap:16px}.merchant-metric{padding:0 0 16px}.report-navigation button{padding:10px 12px;font-size:14px}}
 @page{size:A4 portrait;margin:12mm}
 @media print{
   html,body{width:auto!important;min-width:0!important;background:white;font-size:10px;print-color-adjust:exact;-webkit-print-color-adjust:exact}

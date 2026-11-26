@@ -10,7 +10,7 @@ const checksums={x64:'313fa40c0d7b18575821de8cb17483031fe07d95de5994f6f435f3b345
 const files=['启动.cmd','查看报告.html','LICENSE','README.md','README.en.md','package.json','dist/index.html',
   'scripts/start.cjs','scripts/launch.cjs','scripts/cdp.cjs','scripts/browser.cjs','scripts/safari.cjs','scripts/safari.jxa','scripts/collection.cjs','scripts/library.cjs','scripts/build.cjs','scripts/platform.cjs',
   'src/app.js','src/index.html','src/core.js','src/collector.js','src/report.js','src/language.js','src/share.js','src/theme.css',
-  'src/personality.js','src/personality.css',...require('../src/personality.js').createEatTI().types.map(({id})=>`src/assets/characters/${id}.png`)];
+  'src/personality.js','src/personality.css','src/assets/favicon.svg',...require('../src/personality.js').createEatTI().types.map(({id})=>`src/assets/characters/${id}.png`)];
 const sha=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 function powershell(command,env){
   const result=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-Command',command],{

@@ -6,11 +6,13 @@
     const language=createLanguage(),range=createReportRange(model,language),eat=createEatTI(),imageExports=createImageExporter();
     reportApp(model,filterPeriod,language,eat,saveShareImage,range,imageExports);
     personalityApp(model,eat,language,saveShareImage,range,imageExports);
-    const nav=document.createElement('nav');nav.className='extension-export';
+    const nav=document.createElement('footer');nav.className='extension-export';
     const back=document.createElement('a');back.className='button secondary';back.href='app.html';
     const html=document.createElement('button'),json=document.createElement('button'),status=document.createElement('p');status.setAttribute('role','status');
-    nav.append(back,html,json,status);document.querySelector('.report-navigation').before(nav);
-    function labels(){back.textContent=language.t('报告库','My reports');html.textContent=language.t('保存离线 HTML','Save offline HTML');json.textContent=language.t('导出 JSON','Export JSON');}
+    html.className=json.className='secondary';status.className='export-status';
+    nav.append(html,json,status);document.body.append(nav);
+    back.classList.add('report-library');document.querySelector('.topbar-actions').prepend(back);
+    function labels(){back.textContent=language.t('报告库','My reports');html.textContent=language.t('保存离线网页','Save offline page');json.textContent=language.t('导出原始数据','Export original data');}
     labels();language.onChange(labels);
     const filename=`dku-${data.start}_${data.end}`;
     function download(contents,type,name){const url=URL.createObjectURL(new Blob([contents],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);}

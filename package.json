@@ -1,6 +1,6 @@
 {
   "name": "dku-annual-eat",
-  "version": "1.3.0-beta.1",
+  "version": "1.4.0",
   "private": true,
   "description": "DKU campus card browser extension and local spending report",
   "scripts": {

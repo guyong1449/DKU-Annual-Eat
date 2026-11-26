@@ -32,7 +32,7 @@ async function main(){
       if(value.exceptionDetails)throw new Error(value.exceptionDetails.exception?.description||value.exceptionDetails.text);
       return value.result?.value;
     };
-    const rows=Array.from({length:8},(_,i)=>`<tr><td>2025.09.0${i%3+1}<br>12:30</td><td>Expense<br>Transaction Number: synthetic-${i}</td><td>面档 &amp; Noodles</td><td>-13.50</td><td>Transaction Successful!</td></tr>`);
+    const rows=Array.from({length:8},(_,i)=>`<tr><td>2025.${i<3?'01':i===3?'02':'03'}.0${i%3+1}<br>12:30</td><td>Expense<br>Transaction Number: synthetic-${i}</td><td>${i===0?'蛋包饭 1F-2':'面档 Harbour Deli 1F-2（卫孔记） 1F-2'}</td><td>-13.50</td><td>Transaction Successful!</td></tr>`);
     const table=page=>`<table class="nyu-table"><thead><tr><th>Creation Time</th><th>Transaction ID</th><th>Merchant</th><th>Amount</th><th>Status</th></tr></thead><tbody>${(page===1?rows.slice(0,6):mode==='duplicate'?rows.slice(0,2):rows.slice(6)).join('')}</tbody></table>Page ${page} of 2`;
     client.socket.addEventListener('message',event=>{
       const message=JSON.parse(event.data);
@@ -71,6 +71,8 @@ async function main(){
     const base=target.url.replace(/background\.js$/,'');
     const open=async url=>{const {targetId}=await client.send('Target.createTarget',{url});const sessionId=await until(()=>sessions.get(targetId),'page attach');try{await until(async()=>{try{return await evaluate(sessionId,`location.href===${JSON.stringify(url)}&&document.readyState==="complete"`);}catch{return false;}},'page load: '+url);}catch(error){console.error(await evaluate(sessionId,'JSON.stringify({url:location.href,title:document.title,ready:document.readyState,body:document.body?.innerText.slice(0,500)})'),errors);throw error;}return {targetId,sessionId};};
     const dashboard=await open(base+'app.html');
+    assert.deepEqual(await evaluate(dashboard.sessionId,`(async()=>{const image=new Image();image.src=document.querySelector('link[rel="icon"]').href;await image.decode();const canvas=document.createElement('canvas');canvas.width=canvas.height=32;const ctx=canvas.getContext('2d');ctx.drawImage(image,0,0,32,32);return [...ctx.getImageData(4,16,1,1).data];})()`),[4,67,132,255]);
+    checks.push('browser tab icon renders in DKU blue');
     const state=()=>evaluate(dashboard.sessionId,'chrome.runtime.sendMessage({type:"state"})');
     await until(async()=>(await state()).ok,'dashboard');
     const portal=await open('about:blank'),portalSession=portal.sessionId;
@@ -88,6 +90,12 @@ async function main(){
     checks.push('English campus collection fetches every page and rechecks page one');
     const report=await open(base+'report.html?id='+done.job.reportId);
     await until(()=>evaluate(report.sessionId,'Boolean(window.dkuReport&&document.getElementById("net").textContent.includes("108"))'),'report rendering');
+    assert(await evaluate(report.sessionId,`(()=>{
+      const nav=document.querySelector('.report-navigation'),footer=document.querySelector('.extension-export'),view=document.getElementById('report-view');
+      const names=document.getElementById('merchant-tags').textContent;
+      return !!(nav.compareDocumentPosition(view)&Node.DOCUMENT_POSITION_FOLLOWING)&&!!(view.compareDocumentPosition(footer)&Node.DOCUMENT_POSITION_FOLLOWING)&&names.includes('蛋包饭 1F-2')&&names.includes('面档 Harbour Deli')&&document.querySelector('.topbar-actions .report-library')&&!footer.querySelector('h2')&&!footer.textContent.includes('需要留存或迁移时')&&footer.querySelectorAll('button').length===2&&decodeURIComponent(document.querySelector('link[rel="icon"]').href).includes('#044384');
+    })()`));
+    checks.push('primary report navigation precedes content; backups are at the bottom and full counter names remain visible');
     await evaluate(report.sessionId,'document.getElementById("show-eat").click()');
     assert.equal(await evaluate(report.sessionId,'document.getElementById("eat-view").hidden'),false);
     await evaluate(report.sessionId,'document.getElementById("language-toggle").click()');
@@ -145,6 +153,14 @@ async function main(){
       const shot=await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},sessionId);
       fs.writeFileSync(path.join(evidence,name+'.png'),Buffer.from(shot.data,'base64'));
     }
+    for(const width of [1360,390]){
+      await client.send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<600},report.sessionId);
+      assert(await evaluate(report.sessionId,'document.documentElement.scrollWidth<=innerWidth'),`report fits ${width}px viewport`);
+      await evaluate(report.sessionId,'document.querySelector(".explorer").scrollIntoView({block:"start"})');
+      const shot=await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},report.sessionId);
+      fs.writeFileSync(path.join(evidence,`report-window-${width}.png`),Buffer.from(shot.data,'base64'));
+    }
+    checks.push('desktop and mobile reports fit the viewport with compact counter charts');
     assert.deepEqual(errors,[]);
     fs.writeFileSync(path.join(evidence,'result.json'),JSON.stringify({checks,errors,synthetic:true,downloads},null,2));
     console.log(JSON.stringify({passed:checks.length,checks,evidence},null,2));
